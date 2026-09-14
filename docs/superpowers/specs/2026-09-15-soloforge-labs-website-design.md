@@ -23,10 +23,10 @@
 The chosen design approach is **The Modular Suite Switcher** (inspired by the aesthetics and density of Vercel, Raycast, and JetBrains).
 
 ### Primary Reference: Main Hub Layout
-![SoloForge Labs Modular Suite Design](../assets/selected_design_modular_suite.jpg)
+![SoloForge Labs Modular Suite Design](../../assets/mockups/01_selected_modular_suite_hub.jpg)
 
 ### Secondary Reference: In-Depth Product Landing (Hybrid Architecture)
-![Product Deep Dive Page Reference](../assets/product_landing_reference.jpg)
+![Product Deep Dive Page Reference](../../assets/mockups/02_product_deep_dive_page.jpg)
 
 ---
 
