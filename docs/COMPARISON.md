@@ -17,7 +17,6 @@ While both applications share our signature floating acrylic Voice Orb, direct U
 | **Local Speech Models** | None (Cloud inference) | `tiny`, `base`, `small`, `medium`, `large-v3-turbo` |
 | **Text Polish Engine** | `llama-3.3-70b-versatile` | Local `llama-cpp-python` (`Qwen2.5` GGUF) |
 | **4-Tier Rewriting Depth**| ✅ Full Support (`Ctrl+Shift+1..4`) | ✅ Full Support (`Ctrl+Shift+1..4`) |
-| **Essence Summary Mode** | ✅ Supported (`Ctrl+Shift+S`) | ✅ Supported (`Ctrl+Shift+S`) |
 | **Transcription Latency** | **Sub-second (~300–600 ms)** | ~300ms (CUDA GPU) to ~1.2s (Multi-core CPU) |
 | **RAM Consumption** | **< 60 MB** | ~800 MB (Base model) to ~3.5 GB (Large model) |
 | **GPU / CPU Load** | **0% local compute load** | Uses local NVIDIA CUDA cores or multi-core CPU |

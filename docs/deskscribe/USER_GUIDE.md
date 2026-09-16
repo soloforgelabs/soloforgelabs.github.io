@@ -91,7 +91,6 @@ DeskScribe offers multi-tier on-device local rewriting using quantized GGUF mode
 | **Level 2** | `Ctrl + Shift + 2` | `2` | **Fluent Speech (Грамотная речь):** Local GGUF strips verbal ticks, stutters, and fixes grammar and punctuation. |
 | **Level 3** | `Ctrl + Shift + 3`<br>`Ctrl + Shift + B` | `3` | **Business Polish (Деловой стиль):** Rewrites conversational audio into clear, professional corporate language. |
 | **Level 4** | `Ctrl + Shift + 4` | `4` | **Academic & Formal (Академический):** Strict scientific, analytical, and executive prose. |
-| **Summary** | `Ctrl + Shift + S` | `S` | **Essence Summary (Выжимка сути):** Local summarization into concise bullet points. |
 | **Translation** | `Ctrl + Shift + T` | `T` | **Local Translation:** Translates speech into American or British English completely offline. |
 
 ---

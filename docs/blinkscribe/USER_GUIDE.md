@@ -69,8 +69,7 @@ BlinkScribe provides both dedicated task modes and a granular 4-tier rewriting d
 | :--- | :--- | :--- | :--- |
 | **Clean Dictation** | `Ctrl + Shift + C` | 🟢 Neon Green | Transcribes speech in your native language, strips filler words, and refines grammar according to your selected tier. |
 | **Instant Translation** | `Ctrl + Shift + T` | 🔵 Electric Blue | Transcribes speech in any language and instantly translates it into fluent English (American or British dialect). |
-| **Business Jump** | `Ctrl + Shift + B` | 🟣 Cyber Violet | Instant shortcut to **Level 3 (Business Polish)** for professional correspondence. |
-| **Essence Summary** | `Ctrl + Shift + S` | 🟠 Cyber Amber | Extracts the core essence and key action items from a spoken monologue into concise bullet points. |
+| **Business Jump** | `Ctrl + Shift + B` | 🟣 Cyber Violet | Instant shortcut directly to **Level 3 (Business Polish)** for professional correspondence. |
 
 ---
 
