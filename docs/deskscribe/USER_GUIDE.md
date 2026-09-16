@@ -81,10 +81,18 @@ The glowing obsidian-violet **Voice Orb** floats above your active windows:
 4. Press **`Ctrl + Space`** to complete dictation.
 5. Your local CPU/GPU processes the audio and types the refined text directly at your cursor.
 
-### Operating Modes (Switch with Hotkeys):
-* 🟢 **Clean Speech (`Ctrl + Shift + C`):** Pure local transcription with stutter/filler stripping.
-* 🔵 **Translation (`Ctrl + Shift + T`):** Local speech translation into English.
-* 🟣 **Business Polish (`Ctrl + Shift + B`):** Local LLM refines spoken phrasing into concise, professional prose.
+### Operating Modes & 4-Tier Rewriting Levels:
+
+DeskScribe offers multi-tier on-device local rewriting using quantized GGUF models:
+
+| Tier / Mode | Hotkey | Badge | Style & Local Transformation |
+| :---: | :---: | :---: | :--- |
+| **Level 1** | `Ctrl + Shift + 1` | `1` | **Literal Verbatim (Стенограмма):** Pure local Whisper output with 0% LLM editing. Verbatim word-for-word transcript. |
+| **Level 2** | `Ctrl + Shift + 2` | `2` | **Fluent Speech (Грамотная речь):** Local GGUF strips verbal ticks, stutters, and fixes grammar and punctuation. |
+| **Level 3** | `Ctrl + Shift + 3`<br>`Ctrl + Shift + B` | `3` | **Business Polish (Деловой стиль):** Rewrites conversational audio into clear, professional corporate language. |
+| **Level 4** | `Ctrl + Shift + 4` | `4` | **Academic & Formal (Академический):** Strict scientific, analytical, and executive prose. |
+| **Summary** | `Ctrl + Shift + S` | `S` | **Essence Summary (Выжимка сути):** Local summarization into concise bullet points. |
+| **Translation** | `Ctrl + Shift + T` | `T` | **Local Translation:** Translates speech into American or British English completely offline. |
 
 ---
 

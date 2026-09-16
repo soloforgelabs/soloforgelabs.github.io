@@ -63,11 +63,27 @@ BlinkScribe is engineered for users who want immediate voice dictation without l
 * **Sub-Second Response:** Audio is streamed to Groq LPU cloud engines running `whisper-large-v3-turbo` and `llama-3.3-70b-versatile` with turnaround times typically under 600 ms.
 * **Minimal System Footprint:** Uses less than 60 MB of RAM with 0% local GPU/CPU load during transcription.
 * **Clipboard Immunity:** Types directly into chats, IDEs, or documents via Win32 Unicode injection without clearing or corrupting your clipboard.
-* **Three Instant Modes:**
-  * 🟢 **Clean Dictation (`Ctrl+Shift+C`):** Strips stuttering and filler words while preserving original language.
-  * 🔵 **Instant Translation (`Ctrl+Shift+T`):** Translates speech live into fluent American or British English.
-  * 🟣 **Adaptive Business Polish (`Ctrl+Shift+B`):** Rephrases colloquial speech into polite, executive correspondence.
+* **Three Core Modes & Essence Extraction:**
+  * 🟢 **Clean Dictation (`Ctrl+Shift+C`):** Adaptive speech cleanup and formatting in your original language.
+  * 🔵 **Instant Translation (`Ctrl+Shift+T`):** Live speech-to-text translation into American or British English.
+  * 🟣 **Adaptive Business Polish (`Ctrl+Shift+B`):** Quick jump to Executive & Business correspondence.
+  * 🟠 **Essence Summary (`Ctrl+Shift+S`):** Distills long rambles into bulleted key takeaways.
+* **4-Tier Depth Control (`Ctrl+Shift+1..4`):** Seamlessly scale text restructuring from literal verbatim to academic publication (see below).
 * **Free API Requirement:** Requires a free Groq Cloud API key ([How to get your free key in 60 seconds](docs/blinkscribe/USER_GUIDE.md#step-3-connect-your-free-groq-api-key)).
+
+---
+
+## 🎛️ 4-Tier Rewriting & Intelligence Engine
+
+Both **BlinkScribe** and **DeskScribe** share our signature multi-level text refinement pipeline. You can switch rewriting depth on the fly via keyboard shortcuts (`Ctrl+Shift+1..4`) or by clicking the floating Voice Orb:
+
+| Tier | Hotkey | Mode Style | What It Does & When to Use |
+| :---: | :---: | :--- | :--- |
+| **Level 1** | `Ctrl + Shift + 1` | **Literal Verbatim (Стенограмма)** | **100% word-for-word accuracy.** Bypasses LLM rewriting. No words added, removed, or rephrased. Essential for legal depositions, direct quotes, and exact code identifiers. |
+| **Level 2** | `Ctrl + Shift + 2` | **Fluent Speech (Грамотная речь)** | **Natural conversational clarity.** Automatically strips filler words (*"uh"*, *"um"*, *"like"*, repetitions, stutters), corrects grammatical cases, and inserts natural punctuation without altering sentence structure. |
+| **Level 3** | `Ctrl + Shift + 3`<br>`Ctrl + Shift + B` | **Business Polish (Деловой стиль)** | **Executive workplace correspondence.** Transforms casual verbal rambling into crisp, polite, and persuasive business writing tailored for Slack, Jira, GitHub reviews, and professional emails. |
+| **Level 4** | `Ctrl + Shift + 4` | **Academic & Formal (Академический)** | **Rigorous analytical delivery.** Uses precise vocabulary, formal rhetoric, logical syntax, and structured reasoning suitable for research papers, official documentation, and executive summaries. |
+| **Summary** | `Ctrl + Shift + S` | **Essence Summary (Выжимка сути)** | **Key points extractor.** Distills a long spoken stream of thought into concise, actionable bullet points. |
 
 ---
 

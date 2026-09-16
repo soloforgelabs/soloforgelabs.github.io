@@ -59,15 +59,31 @@ Once launched, the floating neon **Voice Orb** appears on your screen. You can d
 
 ---
 
-## 🎛️ Three Operating Modes
+## 🎛️ Modes & 4-Tier Rewriting Levels
 
-Switch modes instantly using global shortcuts or by right-clicking the Orb:
+BlinkScribe provides both dedicated task modes and a granular 4-tier rewriting depth controller.
+
+### 1. Global Operating Modes:
 
 | Mode | Shortcut | Default Glow | Description |
 | :--- | :--- | :--- | :--- |
-| **Clean Dictation** | `Ctrl + Shift + C` | 🟢 Neon Green | Transcribes speech in your native language, strips filler words ("uh", "um", stuttering), and adds proper punctuation and casing. |
+| **Clean Dictation** | `Ctrl + Shift + C` | 🟢 Neon Green | Transcribes speech in your native language, strips filler words, and refines grammar according to your selected tier. |
 | **Instant Translation** | `Ctrl + Shift + T` | 🔵 Electric Blue | Transcribes speech in any language and instantly translates it into fluent English (American or British dialect). |
-| **Business Polish** | `Ctrl + Shift + B` | 🟣 Cyber Violet | Transforms casual spoken thoughts into articulate, polite, and professional business correspondence without robotic tone. |
+| **Business Jump** | `Ctrl + Shift + B` | 🟣 Cyber Violet | Instant shortcut to **Level 3 (Business Polish)** for professional correspondence. |
+| **Essence Summary** | `Ctrl + Shift + S` | 🟠 Cyber Amber | Extracts the core essence and key action items from a spoken monologue into concise bullet points. |
+
+---
+
+### 2. The 4 Rewriting Tiers (`Ctrl + Shift + 1..4`):
+
+You can change the rewriting depth at any second using keyboard shortcuts or by clicking the Voice Orb:
+
+| Tier | Shortcut | Badge | Style & Behavior |
+| :---: | :---: | :---: | :--- |
+| **Level 1 (Low)** | `Ctrl + Shift + 1` | `1` | **Literal Verbatim (Стенограмма):** 100% word-for-word transcript directly from Whisper STT without LLM intervention. Preserves every word, hesitation, and exact naming verbatim. |
+| **Level 2 (Middle)** | `Ctrl + Shift + 2` | `2` | **Fluent Speech (Грамотная речь):** Cleans up stuttering, removes filler words (*"uh"*, *"um"*, *"like"*, repetitions), fixes punctuation and case endings while keeping your original phrasing natural. |
+| **Level 3 (High)** | `Ctrl + Shift + 3`<br>`Ctrl + Shift + B` | `3` | **Business Polish (Деловой стиль):** Re-structures verbal speech into concise, professional business prose ideal for Jira tickets, Slack updates, client emails, and pull request reviews. |
+| **Level 4 (Extra-High)** | `Ctrl + Shift + 4` | `4` | **Academic & Formal (Академический):** Elevates speech to rigorous academic and executive language with precise technical terminology and formal logic. |
 
 ---
 
