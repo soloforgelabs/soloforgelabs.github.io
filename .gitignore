@@ -1,14 +1,29 @@
+# System & Editor
 .DS_Store
 Thumbs.db
 node_modules/
 dist/
 releases/
+.vscode/
+.idea/
+*.log
+
+# Binary distributions & models
 *.exe
 *.zip
 *.7z
 *.tar.gz
 *.bin
 *.gguf
-.vscode/
-.idea/
-*.log
+
+# Internal Developer & Studio Handover (Strictly local, never public)
+docs/SESSION_CONTEXT.md
+docs/superpowers/
+website/
+scripts/
+
+# Internal design exploration & mockups (only official logo is public)
+assets/README.md
+assets/mockups/
+assets/branding/*
+!assets/branding/00_OFFICIAL_LOGO_SFL_FINAL.jpg
