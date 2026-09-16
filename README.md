@@ -52,7 +52,7 @@
   <p><strong>Featherweight, sub-second cloud-accelerated voice dictation for Windows.</strong></p>
   <p>
     <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/blinkscribe-v1.1.0/BlinkScribe_v1.1.0.exe"><strong>⬇️ Download BlinkScribe.exe (73 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/blinkscribe-v1.1.0/BlinkScribe_v1.1.0_Portable.zip"><strong>📦 Download Portable .ZIP (2.98 GB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/blinkscribe-v1.1.0/BlinkScribe_v1.1.0_Portable.zip"><strong>📦 Download Portable .ZIP (1.78 GB)</strong></a> •
     <a href="docs/blinkscribe/USER_GUIDE.md"><strong>📖 Full User Guide & API Setup →</strong></a>
   </p>
 </div>
@@ -92,8 +92,8 @@ Both **BlinkScribe** and **DeskScribe** share our signature multi-level text ref
 <div align="center">
   <p><strong>100% Offline-First, zero-cloud desktop voice dictation and local text refinement.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.1.0/DeskScribe_Setup_v1.1.0.exe"><strong>⬇️ Download Installer (2.40 GB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.1.0/DeskScribe_v1.1.0_Portable.zip"><strong>📦 Download Portable .ZIP (2.98 GB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.1.0/DeskScribe_Setup_v1.1.0.exe"><strong>⬇️ Download Installer (1.59 GB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.1.0/DeskScribe_v1.1.0_Portable.zip"><strong>📦 Download Portable .ZIP (1.78 GB)</strong></a> •
     <a href="docs/deskscribe/USER_GUIDE.md"><strong>📖 Full User Guide & Model Guide →</strong></a>
   </p>
 </div>
@@ -137,8 +137,8 @@ To verify the integrity and authenticity of downloaded binaries, compare the com
 | :--- | :--- | :--- |
 | `BlinkScribe_v1.1.0.exe` | 73.3 MB | `D537FBBA5E86ED598D4A298FF474599A40ACE187A9E9B7693B36D7DABC5042A9` |
 | `BlinkScribe_v1.1.0_Portable.zip` | 72.9 MB | `3D99E4D519B5C73C0F27A02AEC3B3F1C94A6E4E13764638510BACC58E693B971` |
-| `DeskScribe_Setup_v1.1.0.exe` | 2.40 GB | `974EDCEF073965EC90DC000D827426275F2661EFF803B2C45A3B1066E7304529` |
-| `DeskScribe_v1.1.0_Portable.zip` | 2.98 GB | `8BCFB7EADEB0DA5C11A5DF264B354A4C97D6C202D2BDCA5AC26B7A61D455481E` |
+| `DeskScribe_Setup_v1.1.0.exe` | 1.59 GB | `71F43461EC1294D0BF525CA4DF87C21D3C7A192F5370BEE4E59523701FA934D2` |
+| `DeskScribe_v1.1.0_Portable.zip` | 1.78 GB | `7A2A90666B5BF50BB4784AF0AF906944386C0442127250CB219EEEB8564E3328` |
 
 *(A raw checksum file is also provided at [docs/checksums.sha256](docs/checksums.sha256)).*
 
