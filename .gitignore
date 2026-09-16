@@ -19,6 +19,7 @@ releases/
 # Internal Developer & Studio Handover (Strictly local, never public)
 docs/SESSION_CONTEXT.md
 docs/superpowers/
+docs/*.html
 website/
 scripts/
 
