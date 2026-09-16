@@ -51,8 +51,8 @@
 <div align="center">
   <p><strong>Featherweight, sub-second cloud-accelerated voice dictation for Windows.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/v1.0.0/BlinkScribe_v1.0.0.exe"><strong>⬇️ Download BlinkScribe.exe (73 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/v1.0.0/BlinkScribe_v1.0.0_Portable.zip"><strong>📦 Download Portable .ZIP (73 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/blinkscribe-v1.1.0/BlinkScribe_v1.1.0.exe"><strong>⬇️ Download BlinkScribe.exe (73 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/blinkscribe-v1.1.0/BlinkScribe_v1.1.0_Portable.zip"><strong>📦 Download Portable .ZIP (73 MB)</strong></a> •
     <a href="docs/blinkscribe/USER_GUIDE.md"><strong>📖 Full User Guide & API Setup →</strong></a>
   </p>
 </div>
@@ -135,8 +135,8 @@ To verify the integrity and authenticity of downloaded binaries, compare the com
 
 | File Name | Size | SHA-256 Hash |
 | :--- | :--- | :--- |
-| `BlinkScribe_v1.0.0.exe` | 73.3 MB | `F33AF1D1E4F579E648A722851E40683F0930DB1039AC63B0920AB7ABDBA783A2` |
-| `BlinkScribe_v1.0.0_Portable.zip` | 72.8 MB | `3FA25C875EA6B260AE34B5CDBDE47163C4629807A09CC003E52B942D3D9EBE8E` |
+| `BlinkScribe_v1.1.0.exe` | 73.3 MB | `D537FBBA5E86ED598D4A298FF474599A40ACE187A9E9B7693B36D7DABC5042A9` |
+| `BlinkScribe_v1.1.0_Portable.zip` | 72.9 MB | `3D99E4D519B5C73C0F27A02AEC3B3F1C94A6E4E13764638510BACC58E693B971` |
 | `DeskScribe_Setup_v1.0.0.exe` | 1.38 GB | `931876E4E392E6A645F0F86050A2F98F6EB79FA8C472E6155048BDE9BF56AC48` |
 | `DeskScribe_v1.0.0_Portable.zip` | 1.96 GB | `56BF5D6D53D268C08192088C1369247D1CEA358234A1300874FB4163E578A370` |
 
