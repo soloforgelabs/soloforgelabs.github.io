@@ -22,6 +22,9 @@ docs/superpowers/
 docs/*.html
 website/
 scripts/
+TeegramBot/
+*.cnfg
+*.env
 
 # Internal design exploration & mockups (only official logo is public)
 assets/README.md
