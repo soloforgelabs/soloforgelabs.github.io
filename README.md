@@ -38,7 +38,7 @@
 
 | Product | Form Factor | Architecture | Status | Primary Capability |
 | :--- | :--- | :--- | :--- | :--- |
-| **⚡ [BlinkScribe](#-blinkscribe)** | Desktop (Windows) | Cloud-Accelerated LPU | **v1.0.0 Live** | Sub-second voice dictation, translation & business polish (<60 MB RAM) |
+| **⚡ [BlinkScribe](#-blinkscribe)** | Desktop (Windows) | Cloud-Accelerated LPU | **v1.1.0 Live** | Sub-second voice dictation, translation & business polish (<60 MB RAM) |
 | **🛡️ [DeskScribe](#%EF%B8%8F-deskscribe)** | Desktop (Windows) | 100% Offline Local Silicon | **v1.0.0 Live** | Air-gapped on-device Whisper & Qwen GGUF dictation (Zero Telemetry) |
 | **📐 SizeRadar** | Desktop Utility | Native Pixel Inspector | *In Dev* | Real-time screen layout, spacing, and visual dimension inspector |
 | **🥗 FoodLens** | Mobile (Android) | On-device Computer Vision | *Roadmap* | Smart food macro identification & nutrition camera |
