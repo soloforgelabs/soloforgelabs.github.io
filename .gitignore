@@ -2,6 +2,13 @@
 Thumbs.db
 node_modules/
 dist/
+releases/
+*.exe
+*.zip
+*.7z
+*.tar.gz
+*.bin
+*.gguf
 .vscode/
 .idea/
 *.log
