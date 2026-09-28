@@ -90,7 +90,7 @@ Both **BlinkScribe** and **DeskScribe** share our signature multi-level text ref
 <div align="center">
   <p><strong>100% Offline-First, zero-cloud desktop voice dictation and local text refinement.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.1.1/DeskScribe_Setup_v1.1.1.exe"><strong>⬇️ Download Installer (588.8 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.1.1/DeskScribe_Setup_v1.1.1.exe"><strong>⬇️ Download Installer (588.7 MB)</strong></a> •
     <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.1.1/DeskScribe_v1.1.1_Portable.zip"><strong>📦 Download Portable .ZIP (794.2 MB)</strong></a> •
     <a href="docs/deskscribe/USER_GUIDE.md"><strong>📖 Full User Guide & Model Guide →</strong></a>
   </p>
@@ -135,8 +135,8 @@ To verify the integrity and authenticity of downloaded binaries, compare the com
 | :--- | :--- | :--- |
 | `BlinkScribe_v1.1.1.exe` | 73.3 MB | `55777F28D6B8B714B473080F82EE7922B0A70B792B44A796C2C95BBBCC8FC238` |
 | `BlinkScribe_v1.1.1_Portable.zip` | 72.9 MB | `9CFF72F2EAF5B518862E4E334A1B9EA2EE77E33FBFAB8A94525F46E2624D341D` |
-| `DeskScribe_Setup_v1.1.1.exe` | 588.8 MB | `03A0A42A8C90D65AB9D86603417DC3061D4019367F19508FB5E55FE4851DD5AB` |
-| `DeskScribe_v1.1.1_Portable.zip` | 794.2 MB | `555816A6BEF30CBF8C88B8A9CFB77D34A83451740B9D1E0F8FB4DDEAB3F4F073` |
+| `DeskScribe_Setup_v1.1.1.exe` | 588.7 MB | `C5864E10338D4223AA6EA608ABFFCEB96752CEE9B21F191F4CDD4A18DB0872A0` |
+| `DeskScribe_v1.1.1_Portable.zip` | 794.2 MB | `B392E1D1D12000CF2F6EFD1A0202EE2B0999CDC9918F884FC43D4032852CD346` |
 
 *(A raw checksum file is also provided at [docs/checksums.sha256](docs/checksums.sha256)).*
 
