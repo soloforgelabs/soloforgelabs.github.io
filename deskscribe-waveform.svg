@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 90" width="100%" height="100%" fill="none">
+  <defs>
+    <filter id="emeraldGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <style>
+      .mirror-bar {
+        transform-origin: 50% 45px;
+        animation: deskMirrorSwell 1.45s ease-in-out infinite alternate;
+      }
+      @keyframes deskMirrorSwell {
+        0%, 100% {
+          transform: scaleY(0.22);
+          opacity: 0.6;
+        }
+        50% {
+          transform: scaleY(0.94);
+          opacity: 1;
+        }
+      }
+    </style>
+  </defs>
+
+  <g filter="url(#emeraldGlow)" fill="#10B981">
+    <!-- 24 Symmetrical Mirror Equalizer Bars for DeskScribe (Center-out ripple) -->
+    <rect class="mirror-bar" x="14"  y="15" width="6" height="60" rx="3" style="animation-delay: 0.84s;" />
+    <rect class="mirror-bar" x="29"  y="15" width="6" height="60" rx="3" style="animation-delay: 0.77s;" />
+    <rect class="mirror-bar" x="44"  y="15" width="6" height="60" rx="3" style="animation-delay: 0.70s;" />
+    <rect class="mirror-bar" x="59"  y="15" width="6" height="60" rx="3" style="animation-delay: 0.63s;" />
+    <rect class="mirror-bar" x="74"  y="15" width="6" height="60" rx="3" style="animation-delay: 0.56s;" />
+    <rect class="mirror-bar" x="89"  y="15" width="6" height="60" rx="3" style="animation-delay: 0.49s;" />
+    <rect class="mirror-bar" x="104" y="15" width="6" height="60" rx="3" style="animation-delay: 0.42s;" />
+    <rect class="mirror-bar" x="119" y="15" width="6" height="60" rx="3" style="animation-delay: 0.35s;" />
+    <rect class="mirror-bar" x="134" y="15" width="6" height="60" rx="3" style="animation-delay: 0.28s;" />
+    <rect class="mirror-bar" x="149" y="15" width="6" height="60" rx="3" style="animation-delay: 0.21s;" />
+    <rect class="mirror-bar" x="164" y="15" width="6" height="60" rx="3" style="animation-delay: 0.14s;" />
+    <rect class="mirror-bar" x="179" y="15" width="6" height="60" rx="3" style="animation-delay: 0.07s;" />
+    <rect class="mirror-bar" x="194" y="15" width="6" height="60" rx="3" style="animation-delay: 0.00s;" />
+    <rect class="mirror-bar" x="209" y="15" width="6" height="60" rx="3" style="animation-delay: 0.07s;" />
+    <rect class="mirror-bar" x="224" y="15" width="6" height="60" rx="3" style="animation-delay: 0.14s;" />
+    <rect class="mirror-bar" x="239" y="15" width="6" height="60" rx="3" style="animation-delay: 0.21s;" />
+    <rect class="mirror-bar" x="254" y="15" width="6" height="60" rx="3" style="animation-delay: 0.28s;" />
+    <rect class="mirror-bar" x="269" y="15" width="6" height="60" rx="3" style="animation-delay: 0.35s;" />
+    <rect class="mirror-bar" x="284" y="15" width="6" height="60" rx="3" style="animation-delay: 0.42s;" />
+    <rect class="mirror-bar" x="299" y="15" width="6" height="60" rx="3" style="animation-delay: 0.49s;" />
+    <rect class="mirror-bar" x="314" y="15" width="6" height="60" rx="3" style="animation-delay: 0.56s;" />
+    <rect class="mirror-bar" x="329" y="15" width="6" height="60" rx="3" style="animation-delay: 0.63s;" />
+    <rect class="mirror-bar" x="344" y="15" width="6" height="60" rx="3" style="animation-delay: 0.70s;" />
+    <rect class="mirror-bar" x="359" y="15" width="6" height="60" rx="3" style="animation-delay: 0.77s;" />
+  </g>
+</svg>
