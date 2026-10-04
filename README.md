@@ -39,7 +39,7 @@
 | Product | Form Factor | Architecture | Status | Primary Capability |
 | :--- | :--- | :--- | :--- | :--- |
 | **⚡ [BlinkScribe](#-blinkscribe)** | Desktop (Windows) | Cloud-Accelerated LPU | **v1.2.0 Live** | Sub-second voice dictation, translation & business polish (<60 MB RAM) |
-| **🛡️ [DeskScribe](#%EF%B8%8F-deskscribe)** | Desktop (Windows) | 100% Offline Local Silicon | **v1.2.0 Live** | Air-gapped on-device Whisper & Qwen GGUF dictation (Zero Telemetry) |
+| **🛡️ [DeskScribe](#%EF%B8%8F-deskscribe)** | Desktop (Windows) | 100% Offline Local Silicon | **v1.2.1 Live** | Air-gapped on-device Whisper & Qwen GGUF dictation (Zero Telemetry) |
 | **📐 SizeRadar** | Desktop Utility | Native Pixel Inspector | *In Dev* | Real-time screen layout, spacing, and visual dimension inspector |
 | **🥗 FoodLens** | Mobile (Android) | On-device Computer Vision | *Roadmap* | Smart food macro identification & nutrition camera |
 | **💓 VitalPulse** | Mobile (Android) | Encrypted Telemetry Suite | *Concept* | Private personal health tracker (blood pressure, hydration, medications) |
@@ -90,8 +90,8 @@ Both **BlinkScribe** and **DeskScribe** share our signature multi-level text ref
 <div align="center">
   <p><strong>100% Offline-First, zero-cloud desktop voice dictation and local text refinement.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.2.0/DeskScribe_Setup_v1.2.0.exe"><strong>⬇️ Download Installer (588.9 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.2.0/DeskScribe_v1.2.0_Portable.zip"><strong>📦 Download Portable .ZIP (794.3 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.2.1/DeskScribe_Setup_v1.2.1.exe"><strong>⬇️ Download Installer (588.9 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.2.1/DeskScribe_v1.2.1_Portable.zip"><strong>📦 Download Portable .ZIP (794.3 MB)</strong></a> •
     <a href="docs/deskscribe/USER_GUIDE.md"><strong>📖 Full User Guide & Model Guide →</strong></a>
   </p>
 </div>
@@ -135,14 +135,14 @@ To verify the integrity and authenticity of downloaded binaries, compare the com
 | :--- | :--- | :--- |
 | `BlinkScribe_v1.2.0.exe` | 73.4 MB | `E47A6A58FE9DEE60F12AA89BE29E654B27E3815DC9DB194E1646D01627E2C961` |
 | `BlinkScribe_v1.2.0_Portable.zip` | 72.9 MB | `41F2F7749E95A18F2D295255D8764CD5E756A46E0D7B271A90378DFBE83FF9FC` |
-| `DeskScribe_Setup_v1.2.0.exe` | 588.9 MB | `FFC2C32CB4F8321FDAD08EC96590258F2A844F03A09FE7AA26746E69E853A7F6` |
-| `DeskScribe_v1.2.0_Portable.zip` | 794.3 MB | `44338BBF9AF3254481CEDED0D7B6B4E26003F6043D207F1AC1CAFB4DF78F02FC` |
+| `DeskScribe_Setup_v1.2.1.exe` | 588.9 MB | `FBD15E205ABC11B4F0DAEF948CB4612C38CD70C14C9A05DD29DD6684FCCA559F` |
+| `DeskScribe_v1.2.1_Portable.zip` | 794.3 MB | `123AD55C4F8A368338619D00E21EE183E60693EC5FC6AD5B397BE19784C6547E` |
 
 *(A raw checksum file is also provided at [docs/checksums.sha256](docs/checksums.sha256)).*
 
 ### PowerShell Verification Command:
 ```powershell
-Get-FileHash .\DeskScribe_Setup_v1.2.0.exe -Algorithm SHA256
+Get-FileHash .\DeskScribe_Setup_v1.2.1.exe -Algorithm SHA256
 ```
 
 ---
