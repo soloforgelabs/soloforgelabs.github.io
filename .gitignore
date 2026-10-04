@@ -3,6 +3,7 @@
 Thumbs.db
 node_modules/
 dist/
+*.tsbuildinfo
 releases/
 .vscode/
 .idea/
@@ -21,7 +22,8 @@ docs/SESSION_CONTEXT.md
 docs/superpowers/
 docs/design-research/
 docs/*.html
-website/
+website/node_modules/
+website/dist/
 scripts/
 TeegramBot/
 *.cnfg
