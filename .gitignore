@@ -22,8 +22,7 @@ docs/SESSION_CONTEXT.md
 docs/superpowers/
 docs/design-research/
 docs/*.html
-website/node_modules/
-website/dist/
+website/
 scripts/
 TeegramBot/
 *.cnfg
