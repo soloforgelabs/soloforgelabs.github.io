@@ -41,7 +41,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **⚡ [BlinkScribe](#-blinkscribe)** | Desktop (Windows) | Cloud-Accelerated LPU | **v1.4.0 Live** | Sub-second voice dictation, translation & business polish (<60 MB RAM) |
 | **🛡️ [DeskScribe](#%EF%B8%8F-deskscribe)** | Desktop (Windows) | 100% Offline Local Whisper | **v1.4.0 Live** | Air-gapped 99-language Whisper & Qwen GGUF dictation (Zero Telemetry) |
-| **🟣 [VoxScribe](#-voxscribe)** | Desktop (Windows) | 100% Offline NVIDIA NeMo ONNX | **v1.0.0 Live** | Next-gen Parakeet-TDT & Canary-1B dictation, live streaming & single-pass AST |
+| **🟣 [VoxScribe](#-voxscribe)** | Desktop (Windows) | 100% Offline NVIDIA NeMo ONNX | **v1.1.0 Live** | Next-gen Parakeet-TDT & Canary-1B dictation, live streaming & single-pass AST |
 | **📐 SizeRadar** | Desktop Utility | Native Pixel & Storage Inspector | *RC Q4 2026* | Intelligent disk map, perceptual duplicate finder & dev debris cleaner |
 | **🥗 FoodLens** | Mobile (Android) | On-device Computer Vision | *Roadmap* | Smart food macro identification & nutrition camera |
 | **💓 PulseTrack** | Mobile (Android) | Encrypted Telemetry Suite | *Concept* | Private personal health tracker (blood pressure, hydration, medications) |
@@ -115,8 +115,8 @@ DeskScribe is built for security professionals, legal/medical practitioners, ent
 <div align="center">
   <p><strong>100% Offline NVIDIA NeMo FastConformer voice dictation, realtime live streaming & single-pass translation.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.0.0/VoxScribe_Setup_v1.0.0.exe"><strong>⬇️ Download Installer (611.8 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.0.0/VoxScribe_v1.0.0_Portable.zip"><strong>📦 Download Portable .ZIP (830.9 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.1.0/VoxScribe_Setup_v1.1.0.exe"><strong>⬇️ Download Installer (611.8 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.1.0/VoxScribe_v1.1.0_Portable.zip"><strong>📦 Download Portable .ZIP (830.9 MB)</strong></a> •
     <a href="docs/voxscribe/USER_GUIDE.md"><strong>📖 Full User Guide & NVIDIA Models Manual →</strong></a>
   </p>
 </div>
@@ -163,8 +163,8 @@ To verify the integrity and authenticity of downloaded binaries, compare the com
 | `BlinkScribe_v1.4.0_Portable.zip` | 60.9 MB | `B4E7B4DFF51782F362E7801D453B695A44CD538BB81975F5C6BF981416FCAD19` |
 | `DeskScribe_Setup_v1.4.0.exe` | 588.9 MB | `9A965BD37AC84547199A2DF779F350A986B8A45AE93D4204CB59154D6BFDBD63` |
 | `DeskScribe_v1.4.0_Portable.zip` | 794.4 MB | `108008294A710F53BCE82DEC1CD8F99F005F209E87939B387C738965ED0B0EB7` |
-| `VoxScribe_Setup_v1.0.0.exe` | 611.8 MB | `BA4CAAFB47112BEDB4DEE05F6856265B5019E316C46DDD119F0668E71FBC7E3A` |
-| `VoxScribe_v1.0.0_Portable.zip` | 830.9 MB | `C8527272C20A7FF5624546B242ECF95CA73564E58579ECAA4091BBA37B156547` |
+| `VoxScribe_Setup_v1.1.0.exe` | 119.8 MB | `7B8E53A875D8A337912F7757F213724F676C5AA0FE37295F27C262424ABDBBF0` |
+| `VoxScribe_v1.1.0_Portable.zip` | 177.3 MB | `D050A7043A8FC73ADE35976D425277A5E1A093F9BD50B22C4A6224F7115E5B2F` |
 
 *(A raw checksum file is also provided at [docs/checksums.sha256](docs/checksums.sha256)).*
 
