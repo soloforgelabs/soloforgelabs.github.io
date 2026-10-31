@@ -7,7 +7,7 @@
 > **Precision tools for speed, focus, and privacy. Engineered independently.**
 
 [![Website](https://img.shields.io/badge/Website-soloforgelabs.github.io-00E5FF?style=for-the-badge&logo=firefox)](https://soloforgelabs.github.io/)
-[![Releases](https://img.shields.io/badge/Releases-v1.4.0_%2F_VoxScribe_v1.0.0_Live-7C3AED?style=for-the-badge&logo=github)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
+[![Releases](https://img.shields.io/badge/Releases-v1.4.0_%2F_VoxScribe_v1.2.1_Live-7C3AED?style=for-the-badge&logo=github)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Ko-fi Support](https://img.shields.io/badge/Support-Buy_us_a_coffee-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white)](https://ko-fi.com/soloforgelabs)
 [![Platform](https://img.shields.io/badge/Platform-Windows_10_%2F_11-0078D6?style=for-the-badge&logo=windows)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 
@@ -41,7 +41,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **⚡ [BlinkScribe](#-blinkscribe)** | Desktop (Windows) | Cloud-Accelerated LPU | **v1.4.0 Live** | Sub-second voice dictation, translation & business polish (<60 MB RAM) |
 | **🛡️ [DeskScribe](#%EF%B8%8F-deskscribe)** | Desktop (Windows) | 100% Offline Local Whisper | **v1.4.0 Live** | Air-gapped 99-language Whisper & Qwen GGUF dictation (Zero Telemetry) |
-| **🟣 [VoxScribe](#-voxscribe)** | Desktop (Windows) | 100% Offline NVIDIA NeMo ONNX | **v1.1.0 Live** | Next-gen Parakeet-TDT & Canary-1B dictation, live streaming & single-pass AST |
+| **🟣 [VoxScribe](#-voxscribe)** | Desktop (Windows) | 100% Offline NVIDIA NeMo ONNX | **v1.2.1 Live** | Next-gen Parakeet-TDT & Canary-1B dictation, live streaming & single-pass AST |
 | **📐 SizeRadar** | Desktop Utility | Native Pixel & Storage Inspector | *RC Q4 2026* | Intelligent disk map, perceptual duplicate finder & dev debris cleaner |
 | **🥗 FoodLens** | Mobile (Android) | On-device Computer Vision | *Roadmap* | Smart food macro identification & nutrition camera |
 | **💓 PulseTrack** | Mobile (Android) | Encrypted Telemetry Suite | *Concept* | Private personal health tracker (blood pressure, hydration, medications) |
@@ -115,8 +115,8 @@ DeskScribe is built for security professionals, legal/medical practitioners, ent
 <div align="center">
   <p><strong>100% Offline NVIDIA NeMo FastConformer voice dictation, realtime live streaming & single-pass translation.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.1.0/VoxScribe_Setup_v1.1.0.exe"><strong>⬇️ Download Installer (611.8 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.1.0/VoxScribe_v1.1.0_Portable.zip"><strong>📦 Download Portable .ZIP (830.9 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.2.1/VoxScribe_Setup_v1.2.1.exe"><strong>⬇️ Download Installer (611.8 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.2.1/VoxScribe_v1.2.1_Portable.zip"><strong>📦 Download Portable .ZIP (830.9 MB)</strong></a> •
     <a href="docs/voxscribe/USER_GUIDE.md"><strong>📖 Full User Guide & NVIDIA Models Manual →</strong></a>
   </p>
 </div>
@@ -163,8 +163,8 @@ To verify the integrity and authenticity of downloaded binaries, compare the com
 | `BlinkScribe_v1.4.0_Portable.zip` | 60.9 MB | `B4E7B4DFF51782F362E7801D453B695A44CD538BB81975F5C6BF981416FCAD19` |
 | `DeskScribe_Setup_v1.4.0.exe` | 588.9 MB | `9A965BD37AC84547199A2DF779F350A986B8A45AE93D4204CB59154D6BFDBD63` |
 | `DeskScribe_v1.4.0_Portable.zip` | 794.4 MB | `108008294A710F53BCE82DEC1CD8F99F005F209E87939B387C738965ED0B0EB7` |
-| `VoxScribe_Setup_v1.1.0.exe` | 119.8 MB | `034C6AA04E247FEFDB1A82CBBA1C78CE0B5393F8CC5A20938966AC8F7EB4CD60` |
-| `VoxScribe_v1.1.0_Portable.zip` | 177.3 MB | `AE579DEB95E6B82E1C5B1D146F4E49605461E8AF5D29C94250CB40D67CAE34ED` |
+| `VoxScribe_Setup_v1.2.1.exe` | 122.7 MB | `3315873C14358ADF1B5DE058E5832D5247B685C827FAD51FFDC76AFD585DF02E` |
+| `VoxScribe_v1.2.1_Portable.zip` | 187.4 MB | `F9FD1BC4986158BAA1D3A4CB04CE88A3C87533C1FBA483C3BA1E9B60AB3FD386` |
 
 *(A raw checksum file is also provided at [docs/checksums.sha256](docs/checksums.sha256)).*
 
