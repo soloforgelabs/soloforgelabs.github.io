@@ -4,7 +4,7 @@
 
 [![Version](https://img.shields.io/badge/Version-1.0.0-00E5FF?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Platform](https://img.shields.io/badge/Platform-Windows_10%2F11-0078D6?style=flat&logo=windows)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
-[![Support](https://img.shields.io/badge/Support-Ko--fi-FF5E5B?style=flat&logo=kofi&logoColor=white)](https://ko-fi.com/soloforgelabs)
+[![Patreon](https://img.shields.io/badge/Support-Patreon_Shop-FF424D?style=flat&logo=patreon&logoColor=white)](https://www.patreon.com/SoloForgeLabs/shop)
 
 ---
 
@@ -111,8 +111,8 @@ Right-click the Voice Orb and select **"Settings"**:
 
 ---
 
-## ☕ Support Independent Engineering
+## 🧡 Support Independent Engineering & Licensing
 
-If BlinkScribe speeds up your daily workflow, consider supporting ongoing development:
+If BlinkScribe speeds up your daily workflow, consider supporting ongoing development or unlocking a lifetime license & metallic Voice Orb skins ($3 Bronze Tip / $5 Single / $13 Duo / $15 Scribe Trinity):
 
-👉 **[Support SoloForge Labs on Ko-fi](https://ko-fi.com/soloforgelabs)**
+👉 **[Support SoloForge Labs on Patreon Shop](https://www.patreon.com/SoloForgeLabs/shop)**

@@ -6,7 +6,7 @@
 [![Platform](https://img.shields.io/badge/Platform-Windows_10%2F11-0078D6?style=flat&logo=windows)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Engine](https://img.shields.io/badge/Engine-NVIDIA_NeMo_ONNX-76B900?style=flat&logo=nvidia&logoColor=white)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25_Air--Gapped-00E5FF?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
-[![Support](https://img.shields.io/badge/Support-Ko--fi-FF5E5B?style=flat&logo=kofi&logoColor=white)](https://ko-fi.com/soloforgelabs)
+[![Patreon](https://img.shields.io/badge/Support-Patreon_Shop-FF424D?style=flat&logo=patreon&logoColor=white)](https://www.patreon.com/SoloForgeLabs/shop)
 
 ---
 
@@ -72,8 +72,8 @@ The glowing neon **Voice Orb** floats unobtrusively over your desktop:
 
 ---
 
-## ☕ Support Independent Engineering
+## 🧡 Support Independent Engineering & Licensing
 
-If VoxScribe accelerates your workflow while keeping your voice 100% private and offline, consider supporting our independent studio:
+If VoxScribe accelerates your workflow while keeping your voice 100% private and offline, consider supporting our independent studio or unlocking a lifetime license & metallic Voice Orb skins ($3 Bronze Tip / $5 Single / $13 Duo / $15 Scribe Trinity):
 
-👉 **[Support SoloForge Labs on Ko-fi](https://ko-fi.com/soloforgelabs)**
+👉 **[Support SoloForge Labs on Patreon Shop](https://www.patreon.com/SoloForgeLabs/shop)**

@@ -8,7 +8,7 @@
 
 [![Website](https://img.shields.io/badge/Website-soloforgelabs.github.io-00E5FF?style=for-the-badge&logo=firefox)](https://soloforgelabs.github.io/)
 [![Releases](https://img.shields.io/badge/Releases-v1.4.0_%2F_VoxScribe_v1.2.1_Live-7C3AED?style=for-the-badge&logo=github)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
-[![Ko-fi Support](https://img.shields.io/badge/Support-Buy_us_a_coffee-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white)](https://ko-fi.com/soloforgelabs)
+[![Patreon Support](https://img.shields.io/badge/Support-Patreon_Shop-FF424D?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/SoloForgeLabs/shop)
 [![Platform](https://img.shields.io/badge/Platform-Windows_10_%2F_11-0078D6?style=for-the-badge&logo=windows)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 
 <p align="center">
@@ -185,15 +185,20 @@ SoloForge Labs utilities are distributed as closed-source freeware. We welcome a
 
 ---
 
-## ☕ Support Independent Engineering
+## 🧡 Support Independent Engineering & Licensing
 
-SoloForge Labs products are built and maintained independently. If BlinkScribe, DeskScribe, or VoxScribe saves you time and elevates your daily workflow, consider supporting future development:
+SoloForge Labs products are built and maintained independently with unlimited free Verbatim dictation and 20 Free Pro Trial runs. Support ongoing development or unlock perpetual desktop licenses + metallic Voice Orb skins on our Patreon Shop:
+
+* **$3 Bronze Supporter Tip** (`1 PC`): **Bronze Coin Orb** skin across all 3 apps (keeps Free Tier limits)
+* **$5 Single Edition** (`1 PC`): Unlock 1 Scribe app + **Silver Coin Orb** skin
+* **$13 Duo Pack** (`2 PCs`): Unlock BlinkScribe + 1 Offline engine + **Gold Coin Orb** skin
+* **$15 Scribe Trinity** (`5 PCs`): Unlock all 3 Scribe apps + Browser Extension + **Platinum Coin & Custom PNG Orb** skins
 
 <div align="center">
 
-[![Support on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/soloforgelabs)
+[![Support on Patreon](https://img.shields.io/badge/Patreon-SoloForge_Labs_Shop-FF424D?style=for-the-badge&logo=patreon&logoColor=white)](https://www.patreon.com/SoloForgeLabs/shop)
 
-**[👉 Support SoloForge Labs on Ko-fi (ko-fi.com/soloforgelabs)](https://ko-fi.com/soloforgelabs)**
+**[👉 Support SoloForge Labs on Patreon Shop (patreon.com/SoloForgeLabs/shop)](https://www.patreon.com/SoloForgeLabs/shop)**
 
 *Thank you for supporting independent software craftsmanship!*
 

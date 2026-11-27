@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/Version-1.0.0-7C3AED?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Platform](https://img.shields.io/badge/Platform-Windows_10%2F11-0078D6?style=flat&logo=windows)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25_Air--Gapped-00E5FF?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
-[![Support](https://img.shields.io/badge/Support-Ko--fi-FF5E5B?style=flat&logo=kofi&logoColor=white)](https://ko-fi.com/soloforgelabs)
+[![Patreon](https://img.shields.io/badge/Support-Patreon_Shop-FF424D?style=flat&logo=patreon&logoColor=white)](https://www.patreon.com/SoloForgeLabs/shop)
 
 ---
 
@@ -108,8 +108,8 @@ DeskScribe offers multi-tier on-device local rewriting using quantized GGUF mode
 
 ---
 
-## ☕ Support Independent Engineering
+## 🧡 Support Independent Engineering & Licensing
 
-If DeskScribe protects your privacy and enhances your workflow, support further updates and model optimizations:
+If DeskScribe protects your privacy and enhances your workflow, support further updates or unlock a lifetime license & metallic Voice Orb skins ($3 Bronze Tip / $5 Single / $13 Duo / $15 Scribe Trinity):
 
-👉 **[Support SoloForge Labs on Ko-fi](https://ko-fi.com/soloforgelabs)**
+👉 **[Support SoloForge Labs on Patreon Shop](https://www.patreon.com/SoloForgeLabs/shop)**

@@ -1,0 +1,16 @@
+name = "soloforgelabs-license"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+# Cloudflare KV binding for multi-device seat ledger
+[[kv_namespaces]]
+binding = "LICENSE_KV"
+id = "e946323a22304772a82c6ef8f63899fe" # Production KV namespace ID
+preview_id = "e946323a22304772a82c6ef8f63899fe"
+
+# Secrets required in Cloudflare Worker environment (wrangler secret put <NAME>):
+# - TELEGRAM_BOT_TOKEN : Bot token from @BotFather
+# - TELEGRAM_CHAT_ID   : Telegram user ID or alert channel ID
+# - SFL_LICENSE_PRIVATE_SEED_HEX : 32-byte master Ed25519 seed in hex for signing seat certificates
+# - SFL_VENDOR_PUBLIC_KEY_HEX : (Optional) Override for vendor public key hex (defaults to official vendor key)
+# - KOFI_TOKEN         : (Optional) Verification token for Ko-fi webhook

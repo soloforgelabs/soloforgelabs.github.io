@@ -25,13 +25,21 @@ credentials.json
 *.cnfg
 
 # Internal Developer & Studio Handover (Strictly local, never public)
+CODE_REVIEW.md
 docs/SESSION_CONTEXT.md
+docs/MASTER_MONETIZATION_PLAN.md
+docs/monetization/
 docs/superpowers/
 docs/design-research/
 docs/*.html
 website/
 scripts/*
 !scripts/sync_pages.ps1
+!scripts/license_keygen.py
+!scripts/telegram_bot/
+!scripts/telegram_bot/**
+.master_license_key.json
+*.master_license_key.json
 TeegramBot/
 *.env
 

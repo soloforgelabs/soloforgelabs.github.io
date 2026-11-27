@@ -1,29 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" fill="none">
   <defs>
-    <linearGradient id="sfl-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00f0ff" />
-      <stop offset="50%" stop-color="#00e5ff" />
+    <linearGradient id="bg-obsidian" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d1322" />
+      <stop offset="55%" stop-color="#070a12" />
+      <stop offset="100%" stop-color="#04060b" />
+    </linearGradient>
+    <linearGradient id="border-spec" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.65" />
+      <stop offset="50%" stop-color="#10b981" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.1" />
+    </linearGradient>
+    <radialGradient id="ambient-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00e5ff" stop-opacity="0.55" />
+      <stop offset="60%" stop-color="#10b981" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <!-- Primary 2026 Brand Gradient: Electric Azure -> Laser Cyan -> Seafoam Emerald -->
+    <linearGradient id="sfl-crown" x1="182" y1="309" x2="842" y2="348" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="48%" stop-color="#00d2ff" />
+      <stop offset="100%" stop-color="#34d399" />
+    </linearGradient>
+    <linearGradient id="sfl-left-s" x1="237" y1="371" x2="563" y2="564" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="55%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#00e5ff" />
+    </linearGradient>
+    <linearGradient id="sfl-spine-f" x1="327" y1="712" x2="791" y2="371" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="45%" stop-color="#00e5ff" />
       <stop offset="100%" stop-color="#10b981" />
     </linearGradient>
-    <filter id="sfl-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="3" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    <linearGradient id="sfl-inner-l" x1="468" y1="642" x2="628" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#00e5ff" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="edge-highlight" x1="182" y1="309" x2="842" y2="712" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#e0f2fe" stop-opacity="0.7" />
+      <stop offset="50%" stop-color="#67e8f9" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#6ee7b7" stop-opacity="0.5" />
+    </linearGradient>
+    <filter id="drop-elev" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#000000" flood-opacity="0.55" />
     </filter>
   </defs>
-  <!-- Background Shield/Prism -->
-  <rect width="100" height="100" rx="20" fill="#0c0e14" />
-  <rect width="98" height="98" x="1" y="1" rx="19" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-  
-  <!-- Cyber Forge Monogram (S-F-L Inverted Wing Delta) -->
-  <g filter="url(#sfl-glow)" transform="translate(14, 14) scale(0.72)">
-    <!-- Top S-Wing -->
-    <path d="M 12 18 L 88 18 L 68 34 L 28 34 Z" fill="url(#sfl-grad)" />
-    <!-- Mid F-Bar & Anvil Delta -->
-    <path d="M 28 42 L 76 42 L 62 56 L 24 56 Z" fill="url(#sfl-grad)" opacity="0.9" />
-    <!-- Bottom L-Spur -->
-    <path d="M 24 64 L 54 64 L 40 78 L 12 78 Z" fill="url(#sfl-grad)" opacity="0.8" />
-    <!-- Vertical Connectors -->
-    <path d="M 12 18 L 28 34 L 28 42 L 12 28 Z" fill="#00f0ff" opacity="0.7" />
-    <path d="M 68 34 L 88 18 L 76 42 L 62 42 Z" fill="#10b981" opacity="0.6" />
+  <!-- Obsidian Squircle Surface -->
+  <rect width="1024" height="1024" rx="220" fill="url(#bg-obsidian)" />
+  <rect x="4" y="4" width="1016" height="1016" rx="216" fill="none" stroke="url(#border-spec)" stroke-width="8" opacity="0.55" />
+  <!-- Subtle Ambient Core Glow -->
+  <circle cx="512" cy="500" r="340" fill="url(#ambient-glow)" opacity="0.28" />
+  <g filter="url(#drop-elev)">
+    <polygon points="182.0,309.0 842.0,309.0 811.6,348.0 216.5,348.0" fill="url(#sfl-crown)" stroke="url(#edge-highlight)" stroke-width="1.5" stroke-linejoin="miter" />
+    <polygon points="237.0,371.0 563.0,371.0 533.4,409.0 329.0,409.0 349.4,432.0 515.4,432.0 412.5,564.0 350.0,493.0 400.0,493.0 412.4,507.0 443.6,467.0 322.0,467.0" fill="url(#sfl-left-s)" stroke="url(#edge-highlight)" stroke-width="1.5" stroke-linejoin="miter" />
+    <polygon points="593.0,371.0 791.0,371.0 756.7,415.0 616.8,415.0 588.0,452.0 727.8,452.0 699.0,489.0 559.1,489.0 419.5,668.0 619.0,668.0 600.4,642.0 658.0,642.0 712.0,712.0 327.0,712.0" fill="url(#sfl-spine-f)" stroke="url(#edge-highlight)" stroke-width="1.5" stroke-linejoin="miter" />
+    <polygon points="570.0,512.0 628.0,512.0 526.6,642.0 468.6,642.0" fill="url(#sfl-inner-l)" stroke="url(#edge-highlight)" stroke-width="1.5" stroke-linejoin="miter" />
   </g>
 </svg>

@@ -88,7 +88,7 @@ Write-Host "`n==========================================================" -Foreg
 Write-Host " Sync Complete - Verification Summary                     " -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 
-$syncedRootFiles = @("index.html", ".nojekyll", "favicon.svg", "sfl-logo.png", "sfl-logo-transparent.png", "sfl-logo.svg", "sfl-logo.jpg")
+$syncedRootFiles = @("index.html", ".nojekyll", "favicon.svg", "sfl-mark.webp", "hero-chill-creator.webp", "hero-boardroom-team.webp", "avatar-marcus.webp", "avatar-elena.webp", "avatar-david.webp", "og-image.png", "sfl-logo.png", "sfl-logo-transparent.png", "sfl-logo.svg", "sfl-logo.jpg")
 Write-Host "Root Deployment Files:" -ForegroundColor Cyan
 Get-ChildItem -Path $RepoRoot -File | Where-Object { $_.Name -in $syncedRootFiles } | Select-Object Name, Length, LastWriteTime | Format-Table -AutoSize
 
