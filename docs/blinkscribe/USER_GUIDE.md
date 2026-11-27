@@ -2,7 +2,7 @@
 
 > **BlinkScribe:** Featherweight, sub-second cloud-accelerated voice dictation, instant translation, and adaptive business polish for Windows.
 
-[![Version](https://img.shields.io/badge/Version-1.0.0-00E5FF?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
+[![Version](https://img.shields.io/badge/Version-1.4.0-00E5FF?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Platform](https://img.shields.io/badge/Platform-Windows_10%2F11-0078D6?style=flat&logo=windows)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Patreon](https://img.shields.io/badge/Support-Patreon_Shop-FF424D?style=flat&logo=patreon&logoColor=white)](https://www.patreon.com/SoloForgeLabs/shop)
 
@@ -25,9 +25,9 @@ When you dictate, BlinkScribe captures audio in memory, streams it to Groq's hig
 ## 🚀 Quick Start (Step-by-Step)
 
 ### Step 1: Download & Location
-1. Download **`BlinkScribe_v1.0.0.exe`** or **`BlinkScribe_v1.0.0_Portable.zip`** from [Releases](https://github.com/soloforgelabs/soloforgelabs.github.io/releases).
-2. BlinkScribe is a portable application requiring no installation.
-3. *Recommended:* Create a folder (e.g., `C:\Tools\BlinkScribe` or on your Desktop) and place `BlinkScribe.exe` inside so that its runtime settings (`config.json`) stay neatly grouped.
+1. Download **`BlinkScribe_Setup_v1.4.0.exe`** (44.8 MB) or **`BlinkScribe_Portable_v1.4.0.zip`** (42.8 MB) from [Releases](https://github.com/soloforgelabs/soloforgelabs.github.io/releases).
+2. You can install via the Setup wizard or extract the Portable archive (no installation required).
+3. *Recommended (Portable):* Extract into a folder (e.g., `C:\Tools\BlinkScribe`) so that its runtime settings stay neatly grouped.
 
 ### Step 2: First Launch & Windows SmartScreen
 Because BlinkScribe is an independently built executable without an expensive corporate EV certificate, Windows SmartScreen may show an alert:

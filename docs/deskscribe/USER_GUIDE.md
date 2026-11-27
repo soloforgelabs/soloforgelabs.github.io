@@ -2,7 +2,7 @@
 
 > **DeskScribe:** 100% Offline-First, zero-cloud desktop voice dictation, transcription, and text refinement for Windows.
 
-[![Version](https://img.shields.io/badge/Version-1.0.0-7C3AED?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
+[![Version](https://img.shields.io/badge/Version-1.4.0-7C3AED?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Platform](https://img.shields.io/badge/Platform-Windows_10%2F11-0078D6?style=flat&logo=windows)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25_Air--Gapped-00E5FF?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Patreon](https://img.shields.io/badge/Support-Patreon_Shop-FF424D?style=flat&logo=patreon&logoColor=white)](https://www.patreon.com/SoloForgeLabs/shop)
@@ -28,16 +28,16 @@ DeskScribe is available in two distinct packages from [Releases](https://github.
 
 | Format | File | Size | When to Choose |
 | :--- | :--- | :--- | :--- |
-| **Windows Installer** | `DeskScribe_Setup_v1.0.0.exe` | ~1.38 GB | **Recommended:** Installs DeskScribe cleanly into Windows, creates Desktop & Start Menu shortcuts, registers an uninstaller. Bundles default local models and runtime libraries. |
-| **Portable Archive** | `DeskScribe_v1.0.0_Portable.zip` | ~1.96 GB | **No installation needed:** Extract anywhere (e.g. `C:\Tools\DeskScribe` or a fast NVMe drive / USB). Fully self-contained with bundled models and CUDA runtime dependencies. |
+| **Windows Installer** | `DeskScribe_Setup_v1.4.0.exe` | 141.5 MB | **Recommended:** Slim installer that sets up DeskScribe cleanly into Windows, creates Desktop & Start Menu shortcuts, and downloads selected local models on demand. |
+| **Portable Archive** | `DeskScribe_v1.4.0_Portable.zip` | 214.9 MB | **No installation needed:** Extract anywhere (e.g. `C:\Tools\DeskScribe` or a fast NVMe drive / USB). Self-contained runtime without registry modifications. |
 
 ---
 
 ## 🚀 Quick Start (Step-by-Step)
 
 ### Step 1: Install or Extract
-* **Using Installer:** Run `DeskScribe_Setup_v1.0.0.exe` and follow the setup wizard.
-* **Using Portable:** Extract `DeskScribe_v1.0.0_Portable.zip` into a folder with write permissions (e.g., `C:\DeskScribe`).
+* **Using Installer:** Run `DeskScribe_Setup_v1.4.0.exe` and follow the setup wizard.
+* **Using Portable:** Extract `DeskScribe_v1.4.0_Portable.zip` into a folder with write permissions (e.g., `C:\DeskScribe`).
 
 ### Step 2: First Launch & Windows SmartScreen
 When launching for the first time:

@@ -62,7 +62,7 @@ All three applications share our signature floating acrylic **Voice Orb**, direc
 * ✅ **Pros (Where BlinkScribe Wins):**
   * **Zero Local Hardware Load:** Uses **< 60 MB of RAM** and **0% local CPU/GPU**, preserving 100% of your laptop battery and thermal headroom.
   * **70-Billion Parameter Rewriting:** Uses cloud `llama-3.3-70b-versatile` for Level 3 (Business) and Level 4 (Academic) polishing, offering deeper stylistic nuance than small local 1.5B–3B GGUF models.
-  * **Tiny ~61 MB Download:** No multi-hundred-megabyte neural weights to download or store locally.
+  * **Tiny ~45 MB Download:** No multi-hundred-megabyte neural weights to download or store locally.
 * ⚠️ **Cons / Trade-offs:**
   * **Requires Internet & API Key:** Cannot operate in air-gapped networks, on airplanes without Wi-Fi, or without a free Groq Cloud API key.
   * **Cloud Data Transit:** Audio is transmitted over encrypted TLS to Groq's cloud LPUs (though never stored on disk), which may not be permitted under strict enterprise/legal/medical air-gap policies.
@@ -96,4 +96,4 @@ Do you require 100% Offline / Air-Gapped Privacy (Zero Cloud, Zero Network)?
 * [🛡️ DeskScribe User Guide](deskscribe/USER_GUIDE.md)
 * [⚡ BlinkScribe User Guide](blinkscribe/USER_GUIDE.md)
 * [📦 Download Releases](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
-* [☕ Support SoloForge Labs on Ko-fi](https://ko-fi.com/soloforgelabs)
+* [🧡 Support SoloForge Labs on Patreon Shop](https://www.patreon.com/SoloForgeLabs/shop)

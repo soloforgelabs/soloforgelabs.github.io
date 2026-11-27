@@ -2,7 +2,7 @@
 
 > **VoxScribe:** 100% Offline NVIDIA-Powered desktop voice dictation, realtime streaming, direct speech translation, and local text refinement for Windows.
 
-[![Version](https://img.shields.io/badge/Version-1.0.0-7C3AED?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
+[![Version](https://img.shields.io/badge/Version-1.2.6-7C3AED?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Platform](https://img.shields.io/badge/Platform-Windows_10%2F11-0078D6?style=flat&logo=windows)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Engine](https://img.shields.io/badge/Engine-NVIDIA_NeMo_ONNX-76B900?style=flat&logo=nvidia&logoColor=white)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25_Air--Gapped-00E5FF?style=flat)](https://github.com/soloforgelabs/soloforgelabs.github.io/releases)
@@ -29,8 +29,8 @@ VoxScribe is available in two standalone formats from [Releases](https://github.
 
 | Format | File | When to Choose |
 | :--- | :--- | :--- |
-| **Windows Installer** | `VoxScribe_Setup_v1.0.0.exe` | **Recommended:** Cleanly installs VoxScribe into Windows, creates Desktop & Start Menu shortcuts, and registers an uninstaller. Bundles the complete C++/ONNX runtime, Silero VAD v6, and llama-cpp engine. |
-| **Portable Archive** | `VoxScribe_v1.0.0_Portable.zip` | **No installation needed:** Extract anywhere and run `Run_VoxScribe.bat` or `VoxScribe\VoxScribe.exe`. 100% self-contained without registry modifications. |
+| **Windows Installer** | `VoxScribe_Setup_v1.2.6.exe` (104.3 MB) | **Recommended:** Slim installer that sets up VoxScribe cleanly into Windows, creates Desktop & Start Menu shortcuts, and bundles the C++/ONNX runtime, Silero VAD v6, and llama-cpp engine. |
+| **Portable Archive** | `VoxScribe_v1.2.6_Portable.zip` (163.2 MB) | **No installation needed:** Extract anywhere and run `VoxScribe\VoxScribe.exe`. 100% self-contained without registry modifications. |
 
 ---
 
