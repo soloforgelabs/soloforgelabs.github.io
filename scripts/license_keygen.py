@@ -28,12 +28,16 @@ from __future__ import annotations
 
 import argparse
 import datetime
+from decimal import Decimal, InvalidOperation
 import hashlib
 import json
 import os
 from pathlib import Path
 import sys
 import time
+from typing import Any
+import urllib.error
+import urllib.request
 
 # Ensure soloforge_desktop (or ScribeSuite BlinkScribe fallback) is importable
 _SCRIPT_DIR = Path(__file__).resolve().parent
@@ -50,17 +54,30 @@ try:
         APP_PRODUCT_BITS,
         PRODUCT_BLINKSCRIBE,
         PRODUCT_TRINITY_ALL,
+        PRODUCT_VOXSCRIBE,
         TIER_BRONZE,
+        TIER_GOLD,
         TIER_MAX_SEATS,
+        TIER_NAMES,
+        TIER_PLATINUM,
+        TIER_SILVER,
         LicensePayload,
         ed25519_public_key_from_seed,
         encode_license_key,
         reconstruct_official_public_key,
+        tier_rank,
         verify_and_decode_license_key,
     )
 except ImportError as exc:
     print(f"Error importing soloforge_desktop.licensing: {exc}", file=sys.stderr)
     sys.exit(1)
+
+TIER_THRESHOLD_CENTS: dict[int, int] = {
+    TIER_BRONZE: 300,
+    TIER_SILVER: 500,
+    TIER_GOLD: 1300,
+    TIER_PLATINUM: 1500,
+}
 
 
 def load_master_seed(explicit_seed_hex: str | None = None) -> bytes:
@@ -89,6 +106,237 @@ def load_master_seed(explicit_seed_hex: str | None = None) -> bytes:
     )
 
 
+def tier_from_cents(total_cents: int) -> int:
+    """Map cumulative USD cents to SoloForge tier_code (0 if below $3.00)."""
+    if total_cents >= 1500:
+        return TIER_PLATINUM
+    if total_cents >= 1300:
+        return TIER_GOLD
+    if total_cents >= 500:
+        return TIER_SILVER
+    if total_cents >= 300:
+        return TIER_BRONZE
+    return 0
+
+
+def parse_apps_mask(apps_str: str | None) -> int:
+    """Convert comma-separated app IDs into a bitmask (0 if omitted or empty)."""
+    if not apps_str:
+        return 0
+    mask = 0
+    for app in apps_str.split(","):
+        clean = app.strip().lower()
+        if clean:
+            mask |= APP_PRODUCT_BITS.get(clean, 0)
+    return mask
+
+
+def resolve_upgrade_mask(
+    target_tier: int,
+    prev_tier: int,
+    prev_mask: int,
+    requested_mask: int,
+) -> int:
+    """Resolve product_mask on tier upgrade without inheriting Bronze's mask=7."""
+    if target_tier in (TIER_BRONZE, TIER_PLATINUM):
+        return PRODUCT_TRINITY_ALL
+    if prev_tier in (TIER_SILVER, TIER_GOLD, TIER_PLATINUM) and prev_mask > 0:
+        return (prev_mask | requested_mask) if requested_mask > 0 else prev_mask
+    if requested_mask > 0:
+        return requested_mask
+    if target_tier == TIER_GOLD:
+        return PRODUCT_BLINKSCRIBE | PRODUCT_VOXSCRIBE
+    return PRODUCT_BLINKSCRIBE
+
+
+def _amount_to_cents(amount_raw: str) -> int:
+    try:
+        cents = int((Decimal(str(amount_raw).strip()) * 100).quantize(Decimal("1")))
+    except (InvalidOperation, ValueError) as exc:
+        raise ValueError(f"Invalid --amount value: {amount_raw}") from exc
+    if cents == 0:
+        raise ValueError("--amount must be non-zero")
+    return cents
+
+
+def _record_donation_local(args: argparse.Namespace) -> dict[str, Any]:
+    clean_email = args.email.strip().lower()
+    if not clean_email:
+        raise ValueError("--email must not be empty")
+
+    delta_cents = _amount_to_cents(args.amount)
+    ledger_path = Path(args.ledger_file) if args.ledger_file else (_SCRIPT_DIR / ".donor_ledger.json")
+    ledger: dict[str, Any] = {}
+    if ledger_path.exists():
+        with open(ledger_path, "r", encoding="utf-8") as f:
+            ledger = json.load(f)
+
+    email_sha256 = hashlib.sha256(clean_email.encode("utf-8")).hexdigest()
+    donor_key = f"donor:{email_sha256}"
+    lic_id_hex = email_sha256[:16]
+    lic_key = f"lic:{lic_id_hex}"
+    now_sec = int(time.time())
+
+    record = ledger.get(donor_key) or {
+        "email": clean_email,
+        "email_sha256": email_sha256,
+        "license_id_hex": lic_id_hex,
+        "total_cents": 0,
+        "highest_tier_code": 0,
+        "highest_product_mask": 0,
+        "revoked": False,
+        "transactions": {},
+    }
+    transactions = record.setdefault("transactions", {})
+
+    if args.tx_id and args.tx_id in transactions:
+        return {
+            "ok": True,
+            "duplicate": True,
+            "upgraded": False,
+            "revoked": bool(record.get("revoked", False)),
+            "email": clean_email,
+            "total_cents": record["total_cents"],
+            "total_usd": f"{record['total_cents'] / 100:.2f}",
+            "highest_tier_code": record["highest_tier_code"],
+            "tier_name": TIER_NAMES.get(record["highest_tier_code"], "None"),
+            "product_mask": record["highest_product_mask"],
+            "license_id_hex": lic_id_hex,
+            "license_key": None,
+        }
+
+    record["total_cents"] = max(0, int(record["total_cents"]) + delta_cents)
+    if args.tx_id:
+        transactions[args.tx_id] = {
+            "amount_cents": delta_cents,
+            "ts": now_sec,
+            "source": args.source,
+        }
+
+    prev_tier = int(record.get("highest_tier_code", 0))
+    prev_mask = int(record.get("highest_product_mask", 0))
+    just_revoked = False
+
+    if delta_cents < 0 and prev_tier > 0:
+        if record["total_cents"] < TIER_THRESHOLD_CENTS.get(prev_tier, 0):
+            lic_rec = ledger.get(lic_key) or {"license_id_hex": lic_id_hex}
+            lic_rec["revoked"] = True
+            lic_rec["revoked_ts"] = now_sec
+            ledger[lic_key] = lic_rec
+            record["revoked"] = True
+            record["highest_tier_code"] = 0
+            record["highest_product_mask"] = 0
+            just_revoked = True
+
+    target_tier = tier_from_cents(record["total_cents"])
+    upgraded = False
+    license_key: str | None = None
+
+    if not just_revoked and target_tier > 0 and tier_rank(target_tier) > tier_rank(record["highest_tier_code"]):
+        seed32 = load_master_seed(args.seed_hex)
+        requested_mask = parse_apps_mask(args.apps)
+        resolved_mask = resolve_upgrade_mask(target_tier, prev_tier, prev_mask, requested_mask)
+        expires_ts = (now_sec + args.days * 86400) if args.days > 0 else 0
+        payload = LicensePayload(
+            version=1,
+            product_mask=resolved_mask,
+            tier_code=target_tier,
+            issued_ts=now_sec,
+            expires_ts=expires_ts,
+            license_id_hex=lic_id_hex,
+        )
+        license_key = encode_license_key(payload, seed32)
+        record["highest_tier_code"] = target_tier
+        record["highest_product_mask"] = resolved_mask
+        record["revoked"] = False
+        record["latest_license_key"] = license_key
+        upgraded = True
+
+        if lic_key in ledger:
+            ledger[lic_key]["revoked"] = False
+            ledger[lic_key]["tier_code"] = target_tier
+            ledger[lic_key]["max_seats"] = TIER_MAX_SEATS.get(target_tier, 1)
+
+    ledger[donor_key] = record
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(ledger_path, "w", encoding="utf-8") as f:
+        json.dump(ledger, f, indent=2)
+
+    cur_tier = int(record["highest_tier_code"])
+    return {
+        "ok": True,
+        "upgraded": upgraded,
+        "revoked": bool(record.get("revoked", False)),
+        "email": clean_email,
+        "total_cents": record["total_cents"],
+        "total_usd": f"{record['total_cents'] / 100:.2f}",
+        "previous_tier_code": prev_tier,
+        "highest_tier_code": cur_tier,
+        "tier_name": TIER_NAMES.get(cur_tier, "None"),
+        "product_mask": record["highest_product_mask"],
+        "max_seats": TIER_MAX_SEATS.get(cur_tier, 0) if cur_tier else 0,
+        "license_id_hex": lic_id_hex,
+        "license_key": license_key,
+    }
+
+
+def _record_donation_remote(args: argparse.Namespace) -> dict[str, Any]:
+    token = args.admin_token or os.environ.get("ADMIN_API_TOKEN") or os.environ.get("SFL_ADMIN_API_TOKEN")
+    if not token:
+        raise ValueError("Remote --worker-url requires --admin-token or ADMIN_API_TOKEN env var")
+    delta_cents = _amount_to_cents(args.amount)
+    payload: dict[str, Any] = {
+        "email": args.email.strip().lower(),
+        "amount_cents": delta_cents,
+        "source": args.source,
+        "days": args.days,
+    }
+    if args.tx_id:
+        payload["tx_id"] = args.tx_id
+    if args.apps:
+        payload["apps"] = args.apps
+
+    endpoint = args.worker_url.rstrip("/") + "/api/donations/record"
+    req = urllib.request.Request(
+        endpoint,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {token}",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"Worker returned HTTP {exc.code}: {body}") from exc
+
+
+def handle_record_donation(args: argparse.Namespace) -> None:
+    if not args.email or args.amount is None:
+        print("Error: --record-donation requires --email and --amount", file=sys.stderr)
+        sys.exit(1)
+    try:
+        result = _record_donation_remote(args) if args.worker_url else _record_donation_local(args)
+    except Exception as exc:
+        print(f"Error recording donation: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+    if args.json:
+        print(json.dumps(result, indent=2))
+    else:
+        print("SoloForge Labs Donor Ledger Updated:")
+        print(f"  Email:      {result['email']}")
+        print(f"  Total USD:  ${result['total_usd']} ({result['total_cents']} cents)")
+        print(f"  Tier:       {result.get('tier_name', 'None')} (code={result['highest_tier_code']})")
+        print(f"  Mask:       {result['product_mask']}")
+        print(f"  Revoked:    {result['revoked']}")
+        if result.get("license_key"):
+            print(f"  New Key:    {result['license_key']}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="SoloForge Labs Unified Ed25519 License Key Generator & Verifier"
@@ -108,7 +356,7 @@ def main() -> None:
     parser.add_argument(
         "--apps",
         type=str,
-        default="blinkscribe",
+        default=None,
         help="Comma-separated app IDs: blinkscribe, deskscribe, voxscribe (default: blinkscribe)",
     )
     parser.add_argument(
@@ -144,8 +392,59 @@ def main() -> None:
         action="store_true",
         help="Print the reconstructed official public key and exit",
     )
+    parser.add_argument(
+        "--record-donation",
+        action="store_true",
+        help="Record a cumulative donation/refund and mint upgraded SFL1-... key if tier rises",
+    )
+    parser.add_argument(
+        "--email",
+        type=str,
+        default=None,
+        help="Donor email address (required for --record-donation)",
+    )
+    parser.add_argument(
+        "--amount",
+        type=str,
+        default=None,
+        help="Donation delta in USD, e.g. 5.00 or -5.00 (required for --record-donation)",
+    )
+    parser.add_argument(
+        "--tx-id",
+        type=str,
+        default=None,
+        help="Optional unique transaction ID for idempotent deduplication",
+    )
+    parser.add_argument(
+        "--source",
+        type=str,
+        default="manual",
+        help="Donation source tag (default: manual)",
+    )
+    parser.add_argument(
+        "--ledger-file",
+        type=str,
+        default=None,
+        help="Local JSON ledger file path (default: scripts/.donor_ledger.json)",
+    )
+    parser.add_argument(
+        "--worker-url",
+        type=str,
+        default=None,
+        help="Remote worker base URL to POST /api/donations/record",
+    )
+    parser.add_argument(
+        "--admin-token",
+        type=str,
+        default=None,
+        help="Bearer token for --worker-url (or ADMIN_API_TOKEN env var)",
+    )
 
     args = parser.parse_args()
+
+    if args.record_donation:
+        handle_record_donation(args)
+        return
 
     if args.print_public_key:
         pk = reconstruct_official_public_key()
@@ -200,6 +499,7 @@ def main() -> None:
     seed32 = load_master_seed(args.seed_hex)
 
     # Calculate product mask
+    apps_arg = args.apps if args.apps is not None else "blinkscribe"
     tier_lower = args.tier.lower()
     if tier_lower == "bronze":
         tier_code = TIER_BRONZE
@@ -209,20 +509,10 @@ def main() -> None:
         product_mask = PRODUCT_TRINITY_ALL
     elif tier_lower == "duo":
         tier_code = 2
-        requested_apps = [a.strip().lower() for a in args.apps.split(",") if a.strip()]
-        product_mask = 0
-        for app in requested_apps:
-            product_mask |= APP_PRODUCT_BITS.get(app, 0)
-        if not product_mask:
-            product_mask = PRODUCT_BLINKSCRIBE | PRODUCT_VOXSCRIBE
+        product_mask = parse_apps_mask(apps_arg) or (PRODUCT_BLINKSCRIBE | PRODUCT_VOXSCRIBE)
     else:  # single
         tier_code = 1
-        requested_apps = [a.strip().lower() for a in args.apps.split(",") if a.strip()]
-        product_mask = 0
-        for app in requested_apps:
-            product_mask |= APP_PRODUCT_BITS.get(app, 0)
-        if not product_mask:
-            product_mask = PRODUCT_BLINKSCRIBE
+        product_mask = parse_apps_mask(apps_arg) or PRODUCT_BLINKSCRIBE
 
     issued_ts = int(time.time())
     expires_ts = (issued_ts + args.days * 86400) if args.days > 0 else 0

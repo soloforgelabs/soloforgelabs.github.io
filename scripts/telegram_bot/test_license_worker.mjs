@@ -19,14 +19,18 @@
 
 import assert from "node:assert";
 import { execFileSync } from "node:child_process";
+import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import worker, {
   decodeLicenseKey,
+  encodeLicenseKey,
   verifyAndDecodeLicenseKey,
   signSeatCertificate,
+  md5Bytes,
+  hmacMd5Hex,
   resetInMemoryKv,
   getInMemoryKvStore,
   DEFAULT_VENDOR_PUBLIC_KEY_HEX,
@@ -56,6 +60,14 @@ const TEST_ENV = {
   TELEGRAM_BOT_TOKEN: "mock_token_for_tests",
   TELEGRAM_CHAT_ID: "123456789",
   KOFI_TOKEN: "test_kofi_secret_token",
+  PATREON_WEBHOOK_SECRET: "test_patreon_webhook_secret_123",
+  ADMIN_API_TOKEN: "test_admin_bearer_token_456",
+};
+
+const LEDGER_ENV = {
+  ...TEST_ENV,
+  TELEGRAM_BOT_TOKEN: "",
+  TELEGRAM_CHAT_ID: "",
 };
 
 /**
@@ -671,6 +683,316 @@ async function runTestSuite() {
     assert.strictEqual(secondPcJson.error_code, "seat_limit_reached");
 
     pass("Bronze Supporter tier (tier=4, mask=7): 1 PC seat limit & all 3 apps authorized");
+  }
+
+  // --- Test 16: encodeLicenseKey Roundtrip (JS WebCrypto -> JS & Python Verification) ---
+  {
+    const nowTs = Math.floor(Date.now() / 1000);
+    const licIdHex = bytesToHex(
+      new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode("encoder-test@soloforgelabs.com"))).slice(0, 8)
+    );
+    const jsKey = await encodeLicenseKey(
+      {
+        version: 1,
+        product_mask: 5,
+        tier_code: 2,
+        issued_ts: nowTs,
+        expires_ts: 0,
+        license_id_hex: licIdHex,
+      },
+      MASTER_SEED_HEX
+    );
+    assert.ok(jsKey.startsWith("SFL1-"), "Encoded key must start with SFL1-");
+    assert.strictEqual(jsKey.replace(/SFL1-|-/g, "").length, 141, "Encoded Crockford body must be 141 chars");
+
+    const decodedJs = await verifyAndDecodeLicenseKey(jsKey, TEST_ENV);
+    assert.ok(decodedJs !== null, "JS-encoded key must verify in JS");
+    assert.strictEqual(decodedJs.product_mask, 5);
+    assert.strictEqual(decodedJs.tier_code, 2);
+    assert.strictEqual(decodedJs.max_seats, 2);
+    assert.strictEqual(decodedJs.issued_ts, nowTs);
+    assert.strictEqual(decodedJs.expires_ts, 0);
+    assert.strictEqual(decodedJs.license_id_hex, licIdHex);
+
+    // Cross-verify against Python license_keygen.py --verify
+    const pyOut = execFileSync("python", [KEYGEN_PATH, "--verify", jsKey, "--json"], { encoding: "utf-8" });
+    const pyParsed = JSON.parse(pyOut);
+    assert.strictEqual(pyParsed.valid, true, "JS-encoded key must verify cleanly in Python");
+    assert.strictEqual(pyParsed.tier_code, 2);
+    assert.strictEqual(pyParsed.product_mask, 5);
+    assert.strictEqual(pyParsed.license_id_hex, licIdHex);
+
+    pass("encodeLicenseKey: WebCrypto Ed25519 encoding matches Python Crockford Base32 wire format");
+  }
+
+  // --- Test 17: Pure-JS RFC 1321 MD5 & RFC 2104 HMAC-MD5 Verification ---
+  {
+    assert.strictEqual(bytesToHex(md5Bytes("")), "d41d8cd98f00b204e9800998ecf8427e");
+    assert.strictEqual(bytesToHex(md5Bytes("abc")), "900150983cd24fb0d6963f7d28e17f72");
+    assert.strictEqual(
+      bytesToHex(md5Bytes("The quick brown fox jumps over the lazy dog")),
+      "9e107d9d372bb6826bd81d3542a419d6"
+    );
+    assert.strictEqual(
+      hmacMd5Hex("key", "The quick brown fox jumps over the lazy dog"),
+      "80070713463e7749b90c2dc24911e275"
+    );
+    // Cross-check against Node's native OpenSSL HMAC-MD5 for multi-block >64 byte secret
+    const longSecret = "s".repeat(80);
+    const sampleBody = JSON.stringify({ data: { id: "p_99", attributes: { currently_entitled_amount_cents: 1500 } } });
+    const nodeExpected = nodeCrypto.createHmac("md5", longSecret).update(sampleBody, "utf8").digest("hex");
+    assert.strictEqual(hmacMd5Hex(longSecret, sampleBody), nodeExpected);
+
+    pass("Pure-JS MD5 & HMAC-MD5 match RFC 1321/2104 vectors and Node OpenSSL HMAC-MD5");
+  }
+
+  // --- Test 18: Cumulative Upgrades ($3 -> $6 Silver -> $13 Gold -> $15 Platinum) & Bronze Non-Inheritance ---
+  {
+    resetInMemoryKv();
+    const donorEmail = "UpgradeUser@Example.com";
+
+    // Unauthorized Bearer check -> 401
+    const unauthRes = await callWorker("/api/donations/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer wrong_token" },
+      body: JSON.stringify({ email: donorEmail, amount_cents: 300 }),
+    }, LEDGER_ENV);
+    assert.strictEqual(unauthRes.status, 401);
+
+    // Step 1: $3.00 -> Bronze (tier=4, mask=7, max_seats=1)
+    const r1 = await callWorker("/api/donations/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${LEDGER_ENV.ADMIN_API_TOKEN}` },
+      body: JSON.stringify({ email: donorEmail, amount_cents: 300, tx_id: "tx_step_1", source: "kofi" }),
+    }, LEDGER_ENV);
+    assert.strictEqual(r1.status, 200);
+    const j1 = await r1.json();
+    assert.strictEqual(j1.upgraded, true);
+    assert.strictEqual(j1.total_cents, 300);
+    assert.strictEqual(j1.tier_code, 4);
+    assert.strictEqual(j1.product_mask, 7);
+    assert.strictEqual(j1.max_seats, 1);
+    const dec1 = await verifyAndDecodeLicenseKey(j1.license_key, LEDGER_ENV);
+    assert.strictEqual(dec1.tier_code, 4);
+    assert.strictEqual(dec1.product_mask, 7);
+
+    // Step 2: +$3.00 ($6.00 total) -> Silver (tier=1, max_seats=1). Bronze mask=7 MUST NOT be inherited!
+    const r2 = await callWorker("/api/donations/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${LEDGER_ENV.ADMIN_API_TOKEN}` },
+      body: JSON.stringify({ email: donorEmail, amount_cents: 300, tx_id: "tx_step_2", source: "kofi" }),
+    }, LEDGER_ENV);
+    assert.strictEqual(r2.status, 200);
+    const j2 = await r2.json();
+    assert.strictEqual(j2.upgraded, true);
+    assert.strictEqual(j2.total_cents, 600);
+    assert.strictEqual(j2.tier_code, 1, "Cumulative $6 must reach Silver (tier=1)");
+    assert.strictEqual(j2.product_mask, 1, "Silver must NOT inherit Bronze mask=7; defaults to 1 (BlinkScribe)");
+    assert.strictEqual(j2.max_seats, 1);
+    const dec2 = await verifyAndDecodeLicenseKey(j2.license_key, LEDGER_ENV);
+    assert.strictEqual(dec2.tier_code, 1);
+    assert.strictEqual(dec2.product_mask, 1);
+
+    // Duplicate tx_id must be idempotent
+    const r2Dup = await callWorker("/api/donations/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${LEDGER_ENV.ADMIN_API_TOKEN}` },
+      body: JSON.stringify({ email: donorEmail, amount_cents: 300, tx_id: "tx_step_2", source: "kofi" }),
+    }, LEDGER_ENV);
+    assert.strictEqual(r2Dup.status, 200);
+    const j2Dup = await r2Dup.json();
+    assert.strictEqual(j2Dup.duplicate, true);
+    assert.strictEqual(j2Dup.upgraded, false);
+    assert.strictEqual(j2Dup.total_cents, 600);
+
+    // Step 3: +$7.00 ($13.00 total) -> Gold (tier=2, max_seats=2, inherits Silver mask=1)
+    const r3 = await callWorker("/api/donations/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${LEDGER_ENV.ADMIN_API_TOKEN}` },
+      body: JSON.stringify({ email: donorEmail, amount_cents: 700, tx_id: "tx_step_3", source: "kofi" }),
+    }, LEDGER_ENV);
+    assert.strictEqual(r3.status, 200);
+    const j3 = await r3.json();
+    assert.strictEqual(j3.upgraded, true);
+    assert.strictEqual(j3.total_cents, 1300);
+    assert.strictEqual(j3.tier_code, 2, "Cumulative $13 must reach Gold (tier=2)");
+    assert.strictEqual(j3.product_mask, 1, "Gold upgrading from paid AI Silver inherits previous paid mask=1");
+    assert.strictEqual(j3.max_seats, 2);
+
+    // Step 4: +$2.00 ($15.00 total) -> Platinum (tier=3, mask=7, max_seats=5)
+    const r4 = await callWorker("/api/donations/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${LEDGER_ENV.ADMIN_API_TOKEN}` },
+      body: JSON.stringify({ email: donorEmail, amount_cents: 200, tx_id: "tx_step_4", source: "kofi" }),
+    }, LEDGER_ENV);
+    assert.strictEqual(r4.status, 200);
+    const j4 = await r4.json();
+    assert.strictEqual(j4.upgraded, true);
+    assert.strictEqual(j4.total_cents, 1500);
+    assert.strictEqual(j4.tier_code, 3, "Cumulative $15 must reach Platinum (tier=3)");
+    assert.strictEqual(j4.product_mask, 7, "Platinum always uses mask=7");
+    assert.strictEqual(j4.max_seats, 5);
+    const dec4 = await verifyAndDecodeLicenseKey(j4.license_key, LEDGER_ENV);
+    assert.strictEqual(dec4.tier_code, 3);
+    assert.strictEqual(dec4.product_mask, 7);
+
+    // Fresh direct $13.00 donor -> Gold defaults to mask=5 (BlinkScribe | VoxScribe)
+    const rFreshGold = await callWorker("/api/donations/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${LEDGER_ENV.ADMIN_API_TOKEN}` },
+      body: JSON.stringify({ email: "freshgold@example.com", amount_cents: 1300, tx_id: "tx_gold_fresh" }),
+    }, LEDGER_ENV);
+    const jFreshGold = await rFreshGold.json();
+    assert.strictEqual(jFreshGold.tier_code, 2);
+    assert.strictEqual(jFreshGold.product_mask, 5, "Direct $13 Gold must default to mask=5 (BlinkScribe | VoxScribe)");
+
+    pass("Cumulative upgrades ($3 -> $6 -> $13 -> $15), tx_id dedup & Bronze mask non-inheritance");
+  }
+
+  // --- Test 19: Patreon v2 Webhooks (HMAC-MD5, pledge:update Delta Idempotency, pledge:delete Revocation) ---
+  {
+    resetInMemoryKv();
+    const patreonEmail = "patron@example.com";
+    const pledgeId = "member_pledge_9001";
+
+    function sendPatreonEvent(eventName, entitledCents, sigOverride = null) {
+      const bodyStr = JSON.stringify({
+        data: {
+          id: pledgeId,
+          type: "member",
+          attributes: {
+            email: patreonEmail,
+            currently_entitled_amount_cents: entitledCents,
+          },
+        },
+      });
+      const sig = sigOverride !== null ? sigOverride : hmacMd5Hex(LEDGER_ENV.PATREON_WEBHOOK_SECRET, bodyStr);
+      return callWorker("/api/webhooks/patreon", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Patreon-Event": eventName,
+          "X-Patreon-Signature": sig,
+        },
+        body: bodyStr,
+      }, LEDGER_ENV);
+    }
+
+    // Invalid signature -> 401
+    const badSigRes = await sendPatreonEvent("members:pledge:create", 300, "00000000000000000000000000000000");
+    assert.strictEqual(badSigRes.status, 401);
+
+    // 1. members:pledge:create $3 -> Bronze
+    const p1 = await sendPatreonEvent("members:pledge:create", 300);
+    assert.strictEqual(p1.status, 200);
+    const jp1 = await p1.json();
+    assert.strictEqual(jp1.upgraded, true);
+    assert.strictEqual(jp1.total_cents, 300);
+    assert.strictEqual(jp1.tier_code, 4);
+    assert.strictEqual(jp1.product_mask, 7);
+
+    // 2. members:pledge:update $5 (same data.id!) -> adds delta +200 -> Silver (mask=1)
+    const p2 = await sendPatreonEvent("members:pledge:update", 500);
+    assert.strictEqual(p2.status, 200);
+    const jp2 = await p2.json();
+    assert.strictEqual(jp2.upgraded, true);
+    assert.strictEqual(jp2.total_cents, 500);
+    assert.strictEqual(jp2.tier_code, 1);
+    assert.strictEqual(jp2.product_mask, 1, "Patreon $3->$5 update must NOT inherit Bronze mask=7");
+
+    // 3. Duplicate members:pledge:update $5 -> delta=0 idempotent
+    const p2Dup = await sendPatreonEvent("members:pledge:update", 500);
+    assert.strictEqual(p2Dup.status, 200);
+    const jp2Dup = await p2Dup.json();
+    assert.strictEqual(jp2Dup.idempotent, true);
+    assert.strictEqual(jp2Dup.total_cents, 500);
+
+    // 4. members:pledge:update $15 (same data.id!) -> adds delta +1000 -> Platinum (mask=7)
+    const p3 = await sendPatreonEvent("members:pledge:update", 1500);
+    assert.strictEqual(p3.status, 200);
+    const jp3 = await p3.json();
+    assert.strictEqual(jp3.upgraded, true);
+    assert.strictEqual(jp3.total_cents, 1500);
+    assert.strictEqual(jp3.tier_code, 3);
+    assert.strictEqual(jp3.product_mask, 7);
+    const platinumKey = jp3.license_key;
+
+    // Activate Platinum key on PC1 before pledge deletion
+    const actOk = await callWorker("/api/license/activate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ license_key: platinumKey, hw_id: "hw_patron_pc1", device_name: "PATRON-1" }),
+    }, LEDGER_ENV);
+    assert.strictEqual(actOk.status, 200);
+
+    // 5. members:pledge:delete -> subtracts 1500 -> total=0 -> revokes lic:<id>
+    const pDel = await sendPatreonEvent("members:pledge:delete", 1500);
+    assert.strictEqual(pDel.status, 200);
+    const jpDel = await pDel.json();
+    assert.strictEqual(jpDel.total_cents, 0);
+    assert.strictEqual(jpDel.revoked, true);
+
+    const kvStore = getInMemoryKvStore();
+    const licRec = JSON.parse(kvStore.get("lic:" + jp3.license_id_hex));
+    assert.strictEqual(licRec.revoked, true, "lic:<id>.revoked must be true after pledge:delete");
+
+    // 6. Enforce license_revoked (HTTP 403) on BOTH activate and replace
+    const actRevoked = await callWorker("/api/license/activate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ license_key: platinumKey, hw_id: "hw_patron_pc2", device_name: "PATRON-2" }),
+    }, LEDGER_ENV);
+    assert.strictEqual(actRevoked.status, 403);
+    assert.strictEqual((await actRevoked.json()).error_code, "license_revoked");
+
+    const repRevoked = await callWorker("/api/license/replace", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        license_key: platinumKey,
+        old_hw_id: "hw_patron_pc1",
+        new_hw_id: "hw_patron_pc2",
+        new_device_name: "PATRON-2",
+      }),
+    }, LEDGER_ENV);
+    assert.strictEqual(repRevoked.status, 403);
+    assert.strictEqual((await repRevoked.json()).error_code, "license_revoked");
+
+    pass("Patreon v2 HMAC-MD5, pledge delta updates, pledge:delete & 403 license_revoked on activate/replace");
+  }
+
+  // --- Test 20: Partial Refund Dropping Below Issued Tier Threshold Revokes License ---
+  {
+    resetInMemoryKv();
+    const refundEmail = "refund@example.com";
+    const resBuy = await callWorker("/api/donations/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${LEDGER_ENV.ADMIN_API_TOKEN}` },
+      body: JSON.stringify({ email: refundEmail, amount_cents: 1300, tx_id: "tx_buy_gold" }),
+    }, LEDGER_ENV);
+    const jBuy = await resBuy.json();
+    assert.strictEqual(jBuy.tier_code, 2);
+
+    // Partial refund of $5.00 drops total from $13.00 to $8.00 (< $13.00 threshold for Gold)
+    const resRef = await callWorker("/api/donations/record", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${LEDGER_ENV.ADMIN_API_TOKEN}` },
+      body: JSON.stringify({ email: refundEmail, amount_cents: -500, tx_id: "tx_refund_500" }),
+    }, LEDGER_ENV);
+    assert.strictEqual(resRef.status, 200);
+    const jRef = await resRef.json();
+    assert.strictEqual(jRef.total_cents, 800);
+    assert.strictEqual(jRef.revoked, true);
+
+    const actBlocked = await callWorker("/api/license/activate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ license_key: jBuy.license_key, hw_id: "hw_ref_1", device_name: "REF-PC" }),
+    }, LEDGER_ENV);
+    assert.strictEqual(actBlocked.status, 403);
+    assert.strictEqual((await actBlocked.json()).error_code, "license_revoked");
+
+    pass("Refund dropping below issued tier threshold revokes key on activate");
   }
 
   console.log(`\nAll ${passedCount} tests PASSED with 100% Zero-Mocks compliance!`);

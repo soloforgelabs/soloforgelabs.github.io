@@ -6,7 +6,10 @@
  *    - /api/license/activate   : Registers/re-activates hardware seat (1/2/5 limits)
  *    - /api/license/deactivate : Frees hardware seat (idempotent 200 OK)
  *    - /api/license/replace    : Replaces old/dead PC seat (3/month cap + UTC rollover)
- * 2. Ko-fi to Telegram Notification Webhook (POST /)
+ * 2. Cumulative Donor Ledger & Automated Ed25519 Key Issuance
+ *    - /api/webhooks/patreon   : Patreon v2 HMAC-MD5 webhook (pledge create/update/delete)
+ *    - /api/donations/record   : Admin Bearer-authenticated donation/refund ledger endpoint
+ * 3. Ko-fi to Telegram Notification Webhook (POST /)
  *    - 100% backward compatible with existing Ko-fi donation notifications
  */
 
@@ -215,6 +218,215 @@ export async function verifyAndDecodeLicenseKey(keyStr, env = {}, nowSec = null)
   };
 }
 
+// --- Ed25519 License Key Encoder ---
+
+/**
+ * Encodes a license payload into SFL1-... Crockford Base32 format signed with Ed25519 seed.
+ * Mirrors soloforge_desktop.license_keys.encode_license_key ("SFL-LIC-V1:" + 24-byte big-endian payload).
+ */
+export async function encodeLicenseKey(payload, seedHex) {
+  if (!seedHex || typeof seedHex !== "string") {
+    throw new Error(
+      "Cannot encode license key: SFL_LICENSE_PRIVATE_SEED_HEX is not configured"
+    );
+  }
+
+  const version = payload?.version ?? 1;
+  const productMask = Number(payload?.product_mask);
+  const tierCode = Number(payload?.tier_code);
+  const issuedTs = Number(payload?.issued_ts);
+  const expiresTs = Number(payload?.expires_ts ?? 0);
+  const licIdHex = String(payload?.license_id_hex || "")
+    .trim()
+    .toLowerCase();
+
+  if (version !== 1) {
+    throw new Error(`Unsupported license version: ${version}`);
+  }
+  if (!Number.isInteger(productMask) || productMask < 0 || productMask > 0xffff) {
+    throw new Error(`Invalid product_mask: ${payload?.product_mask}`);
+  }
+  if (!Number.isInteger(tierCode) || tierCode < 1) {
+    throw new Error(`Invalid tier_code: ${payload?.tier_code}`);
+  }
+  if (!Number.isInteger(issuedTs) || issuedTs < 0) {
+    throw new Error(`Invalid issued_ts: ${payload?.issued_ts}`);
+  }
+  if (!Number.isInteger(expiresTs) || expiresTs < 0) {
+    throw new Error(`Invalid expires_ts: ${payload?.expires_ts}`);
+  }
+  if (!/^[0-9a-f]{16}$/.test(licIdHex)) {
+    throw new Error("license_id_hex must be exactly 16 hex characters (8 bytes)");
+  }
+
+  const cleanSeedHex = seedHex.trim().toLowerCase();
+  if (!/^[0-9a-f]{64}$/.test(cleanSeedHex)) {
+    throw new Error("seedHex must be exactly 64 hex characters (32 bytes)");
+  }
+
+  const payloadBytes = new Uint8Array(24);
+  const view = new DataView(payloadBytes.buffer);
+  view.setUint8(0, 0x53); // 'S'
+  view.setUint8(1, version);
+  view.setUint16(2, productMask, false);
+  view.setUint32(4, tierCode >>> 0, false);
+  view.setUint32(8, issuedTs >>> 0, false);
+  view.setUint32(12, expiresTs >>> 0, false);
+  payloadBytes.set(hexToBytes(licIdHex), 16);
+
+  const pkcs8Bytes = hexToBytes(ED25519_PKCS8_PREFIX_HEX + cleanSeedHex);
+  const privKey = await crypto.subtle.importKey(
+    "pkcs8",
+    pkcs8Bytes,
+    { name: "Ed25519" },
+    false,
+    ["sign"]
+  );
+
+  const domainPrefix = new TextEncoder().encode("SFL-LIC-V1:");
+  const signedMsg = concatUint8Arrays(domainPrefix, payloadBytes);
+  const sigBuf = await crypto.subtle.sign({ name: "Ed25519" }, privKey, signedMsg);
+  const sigBytes = new Uint8Array(sigBuf);
+
+  const rawToken = concatUint8Arrays(payloadBytes, sigBytes); // 88 bytes
+  let val = 0n;
+  for (let i = 0; i < rawToken.length; i++) {
+    val = (val << 8n) | BigInt(rawToken[i]);
+  }
+  const totalBits = rawToken.length * 8; // 704
+  const pad = (5 - (totalBits % 5)) % 5; // 1
+  val <<= BigInt(pad);
+  const numChars = (totalBits + pad) / 5; // 141
+
+  let enc = "";
+  for (let i = numChars - 1; i >= 0; i--) {
+    enc += CROCKFORD_ALPHABET[Number((val >> BigInt(i * 5)) & 31n)];
+  }
+
+  const blocks = [];
+  for (let i = 0; i < enc.length; i += 5) {
+    blocks.push(enc.slice(i, i + 5));
+  }
+  return "SFL1-" + blocks.join("-");
+}
+
+// --- Pure-JS RFC 1321 MD5 & RFC 2104 HMAC-MD5 ---
+
+const MD5_SHIFTS = [
+  7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
+  5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20,
+  4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
+  6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21,
+];
+
+const MD5_K = new Uint32Array(64);
+for (let i = 0; i < 64; i++) {
+  MD5_K[i] = Math.floor(Math.abs(Math.sin(i + 1)) * 0x100000000) >>> 0;
+}
+
+function toUtf8Bytes(input) {
+  if (input instanceof Uint8Array) return input;
+  return new TextEncoder().encode(String(input));
+}
+
+function md5RoundTerm(i, b, c, d) {
+  if (i < 16) return [((b & c) | (~b & d)) >>> 0, i];
+  if (i < 32) return [((d & b) | (~d & c)) >>> 0, (5 * i + 1) % 16];
+  if (i < 48) return [(b ^ c ^ d) >>> 0, (3 * i + 5) % 16];
+  return [(c ^ (b | ~d)) >>> 0, (7 * i) % 16];
+}
+
+export function md5Bytes(input) {
+  const src = toUtf8Bytes(input);
+  const origLen = src.length;
+  const paddedLen = Math.ceil((origLen + 9) / 64) * 64;
+  const buf = new Uint8Array(paddedLen);
+  buf.set(src, 0);
+  buf[origLen] = 0x80;
+
+  const bitLen = origLen * 8;
+  const lenView = new DataView(buf.buffer);
+  lenView.setUint32(paddedLen - 8, bitLen >>> 0, true);
+  lenView.setUint32(paddedLen - 4, Math.floor(bitLen / 0x100000000) >>> 0, true);
+
+  let a0 = 0x67452301;
+  let b0 = 0xefcdab89;
+  let c0 = 0x98badcfe;
+  let d0 = 0x10325476;
+  const words = new Uint32Array(16);
+
+  for (let offset = 0; offset < paddedLen; offset += 64) {
+    for (let j = 0; j < 16; j++) {
+      words[j] = lenView.getUint32(offset + j * 4, true);
+    }
+    let a = a0;
+    let b = b0;
+    let c = c0;
+    let d = d0;
+
+    for (let i = 0; i < 64; i++) {
+      const [f, g] = md5RoundTerm(i, b, c, d);
+      const sum = (a + f + MD5_K[i] + words[g]) >>> 0;
+      const shift = MD5_SHIFTS[i];
+      const rot = ((sum << shift) | (sum >>> (32 - shift))) >>> 0;
+      a = d;
+      d = c;
+      c = b;
+      b = (b + rot) >>> 0;
+    }
+
+    a0 = (a0 + a) >>> 0;
+    b0 = (b0 + b) >>> 0;
+    c0 = (c0 + c) >>> 0;
+    d0 = (d0 + d) >>> 0;
+  }
+
+  const out = new Uint8Array(16);
+  const outView = new DataView(out.buffer);
+  outView.setUint32(0, a0, true);
+  outView.setUint32(4, b0, true);
+  outView.setUint32(8, c0, true);
+  outView.setUint32(12, d0, true);
+  return out;
+}
+
+export function hmacMd5Hex(secret, message) {
+  let keyBytes = toUtf8Bytes(secret);
+  if (keyBytes.length > 64) {
+    keyBytes = md5Bytes(keyBytes);
+  }
+  const ipad = new Uint8Array(64);
+  const opad = new Uint8Array(64);
+  for (let i = 0; i < 64; i++) {
+    const k = i < keyBytes.length ? keyBytes[i] : 0;
+    ipad[i] = k ^ 0x36;
+    opad[i] = k ^ 0x5c;
+  }
+  const inner = md5Bytes(concatUint8Arrays(ipad, toUtf8Bytes(message)));
+  const outer = md5Bytes(concatUint8Arrays(opad, inner));
+  return bytesToHex(outer);
+}
+
+function constantTimeEqual(a, b) {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  const enc = new TextEncoder();
+  const bytesA = enc.encode(a);
+  const bytesB = enc.encode(b);
+  let diff = bytesA.length ^ bytesB.length;
+  const maxLen = Math.max(bytesA.length, bytesB.length);
+  for (let i = 0; i < maxLen; i++) {
+    const ba = i < bytesA.length ? bytesA[i] : 0;
+    const bb = i < bytesB.length ? bytesB[i] : 0;
+    diff |= ba ^ bb;
+  }
+  return diff === 0;
+}
+
+async function sha256Hex(text) {
+  const digest = await crypto.subtle.digest("SHA-256", toUtf8Bytes(text));
+  return bytesToHex(new Uint8Array(digest));
+}
+
 // --- Asymmetric Ed25519 Seat Certificate Signing ---
 
 /**
@@ -379,6 +591,16 @@ async function handleActivate(request, env, ctx) {
   const kvKey = "lic:" + payload.license_id_hex;
 
   let record = await getKv(env, kvKey);
+  if (record?.revoked === true) {
+    return jsonResponse(
+      {
+        ok: false,
+        error_code: "license_revoked",
+        message: "This license key has been revoked.",
+      },
+      403
+    );
+  }
   if (!record) {
     record = {
       license_id_hex: payload.license_id_hex,
@@ -589,6 +811,16 @@ async function handleReplace(request, env, ctx) {
   const kvKey = "lic:" + payload.license_id_hex;
 
   let record = await getKv(env, kvKey);
+  if (record?.revoked === true) {
+    return jsonResponse(
+      {
+        ok: false,
+        error_code: "license_revoked",
+        message: "This license key has been revoked.",
+      },
+      403
+    );
+  }
   if (!record) {
     record = {
       license_id_hex: payload.license_id_hex,
@@ -737,6 +969,488 @@ async function sendTelegramDeviceReplacement(
   });
 }
 
+// --- Cumulative Donor Ledger, Patreon Webhook & Admin Recording ---
+
+export const TIER_SILVER = 1;
+export const TIER_GOLD = 2;
+export const TIER_PLATINUM = 3;
+export const TIER_BRONZE = 4;
+
+export const PRODUCT_BLINKSCRIBE = 1;
+export const PRODUCT_DESKSCRIBE = 2;
+export const PRODUCT_VOXSCRIBE = 4;
+export const PRODUCT_TRINITY_ALL = 7;
+
+export const TIER_RANK = { 4: 1, 1: 2, 2: 3, 3: 4 };
+const TIER_THRESHOLD_CENTS = { 4: 300, 1: 500, 2: 1300, 3: 1500 };
+const TIER_NAMES = {
+  1: "Single Edition",
+  2: "Duo Pack",
+  3: "Scribe Trinity",
+  4: "Bronze Supporter",
+};
+const TIER_MAX_SEATS = { 1: 1, 2: 2, 3: 5, 4: 1 };
+
+export function tierRank(tierCode) {
+  return TIER_RANK[Number(tierCode)] || 0;
+}
+
+export function tierFromCents(totalCents) {
+  if (totalCents >= 1500) return TIER_PLATINUM;
+  if (totalCents >= 1300) return TIER_GOLD;
+  if (totalCents >= 500) return TIER_SILVER;
+  if (totalCents >= 300) return TIER_BRONZE;
+  return 0;
+}
+
+export function resolveUpgradeMask(targetTier, prevTier, prevMask, requestedMask) {
+  if (targetTier === TIER_BRONZE || targetTier === TIER_PLATINUM) {
+    return PRODUCT_TRINITY_ALL;
+  }
+  const isPaidAiPrev =
+    prevTier === TIER_SILVER ||
+    prevTier === TIER_GOLD ||
+    prevTier === TIER_PLATINUM;
+  if (isPaidAiPrev && Number.isInteger(prevMask) && prevMask > 0) {
+    return requestedMask > 0 ? prevMask | requestedMask : prevMask;
+  }
+  if (Number.isInteger(requestedMask) && requestedMask > 0) {
+    return requestedMask;
+  }
+  return targetTier === TIER_GOLD
+    ? PRODUCT_BLINKSCRIBE | PRODUCT_VOXSCRIBE
+    : PRODUCT_BLINKSCRIBE;
+}
+
+function parseRequestedMask(apps, productMask) {
+  if (productMask !== undefined && productMask !== null && productMask !== "") {
+    const parsed = Number(productMask);
+    if (Number.isInteger(parsed) && parsed > 0) {
+      return parsed & 0xffff;
+    }
+  }
+  if (!apps) return 0;
+  const list = Array.isArray(apps)
+    ? apps
+    : String(apps)
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+  let mask = 0;
+  for (const app of list) {
+    mask |= APP_PRODUCT_BITS[String(app).trim().toLowerCase()] || 0;
+  }
+  return mask;
+}
+
+async function revokeLicenseRecord(env, licenseIdHex, nowSec) {
+  if (!licenseIdHex) return;
+  const licKvKey = "lic:" + licenseIdHex;
+  let licRecord = await getKv(env, licKvKey);
+  if (!licRecord) {
+    licRecord = {
+      license_id_hex: licenseIdHex,
+      tier_code: 0,
+      max_seats: 1,
+      active_devices: [],
+      replacements_month: "",
+      replacements_count: 0,
+    };
+  }
+  licRecord.revoked = true;
+  licRecord.revoked_ts = nowSec;
+  await putKv(env, licKvKey, licRecord);
+}
+
+async function sendTelegramTierUpgrade(env, details) {
+  const botToken = env.TELEGRAM_BOT_TOKEN;
+  const chatId = env.TELEGRAM_CHAT_ID;
+  if (!botToken || !chatId) return;
+
+  const prevLabel = TIER_NAMES[details.previousTier] || "None";
+  const nextLabel = TIER_NAMES[details.newTier] || `Tier ${details.newTier}`;
+  const totalUsd = (details.totalCents / 100).toFixed(2);
+  const text = `🎉 <b>SoloForge Labs: Выдан / обновлён лицензионный ключ</b>
+━━━━━━━━━━━━━━━━━━━━
+📧 <b>Donor:</b> <code>${escapeHtml(details.email)}</code>
+💰 <b>Total USD:</b> $${totalUsd}
+🏷 <b>Tier:</b> ${escapeHtml(prevLabel)} → <b>${escapeHtml(nextLabel)}</b>
+📡 <b>Source:</b> ${escapeHtml(details.source)}
+🔑 <b>Key:</b> <code>${escapeHtml(details.licenseKey)}</code>`;
+
+  const tgUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+  await fetch(tgUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text,
+      parse_mode: "HTML",
+    }),
+  });
+}
+
+async function applyDonorContribution(env, ctx, params) {
+  const cleanEmail = params.email.trim().toLowerCase();
+  const nowSec = Math.floor(Date.now() / 1000);
+  const emailSha256 = await sha256Hex(cleanEmail);
+  const donorKvKey = "donor:" + emailSha256;
+  const licenseIdHex = emailSha256.slice(0, 16);
+
+  let record = await getKv(env, donorKvKey);
+  if (!record) {
+    record = {
+      email: cleanEmail,
+      email_sha256: emailSha256,
+      license_id_hex: licenseIdHex,
+      total_cents: 0,
+      highest_tier_code: 0,
+      highest_product_mask: 0,
+      revoked: false,
+      transactions: {},
+      patreon_pledges: {},
+    };
+  }
+  record.transactions = record.transactions || {};
+  record.patreon_pledges = record.patreon_pledges || {};
+
+  if (
+    params.txId &&
+    Object.prototype.hasOwnProperty.call(record.transactions, params.txId)
+  ) {
+    return jsonResponse(
+      {
+        ok: true,
+        duplicate: true,
+        upgraded: false,
+        revoked: Boolean(record.revoked),
+        email: cleanEmail,
+        total_cents: record.total_cents,
+        total_usd: (record.total_cents / 100).toFixed(2),
+        highest_tier_code: record.highest_tier_code,
+        tier_code: record.highest_tier_code,
+        product_mask: record.highest_product_mask,
+        license_id_hex: licenseIdHex,
+        license_key: null,
+      },
+      200
+    );
+  }
+
+  let deltaCents = params.deltaCents;
+  if (params.pledgeUpdate) {
+    const { pledgeId, newCents, eventName } = params.pledgeUpdate;
+    const prevEntry = record.patreon_pledges[pledgeId];
+    const prevCents = prevEntry ? Number(prevEntry.last_entitled_cents) || 0 : 0;
+    deltaCents = newCents - prevCents;
+    record.patreon_pledges[pledgeId] = {
+      last_entitled_cents: newCents,
+      updated_ts: nowSec,
+      last_event: eventName,
+    };
+    if (deltaCents === 0) {
+      await putKv(env, donorKvKey, record);
+      return jsonResponse(
+        {
+          ok: true,
+          duplicate: true,
+          idempotent: true,
+          upgraded: false,
+          revoked: Boolean(record.revoked),
+          email: cleanEmail,
+          total_cents: record.total_cents,
+          total_usd: (record.total_cents / 100).toFixed(2),
+          highest_tier_code: record.highest_tier_code,
+          tier_code: record.highest_tier_code,
+          product_mask: record.highest_product_mask,
+          license_id_hex: licenseIdHex,
+          license_key: null,
+        },
+        200
+      );
+    }
+  }
+
+  record.total_cents = Math.max(0, (Number(record.total_cents) || 0) + deltaCents);
+  if (params.txId) {
+    record.transactions[params.txId] = {
+      amount_cents: deltaCents,
+      ts: nowSec,
+      source: params.source,
+    };
+  }
+
+  const prevTierCode = Number(record.highest_tier_code) || 0;
+  const prevMask = Number(record.highest_product_mask) || 0;
+  let justRevoked = false;
+
+  if (deltaCents < 0 && prevTierCode > 0) {
+    const requiredCents = TIER_THRESHOLD_CENTS[prevTierCode] || 0;
+    if (record.total_cents < requiredCents) {
+      await revokeLicenseRecord(env, licenseIdHex, nowSec);
+      record.revoked = true;
+      record.highest_tier_code = 0;
+      record.highest_product_mask = 0;
+      justRevoked = true;
+    }
+  }
+
+  const targetTier = tierFromCents(record.total_cents);
+  const currentTier = Number(record.highest_tier_code) || 0;
+  let upgraded = false;
+  let licenseKey = null;
+
+  if (!justRevoked && targetTier > 0 && tierRank(targetTier) > tierRank(currentTier)) {
+    if (!env || !env.SFL_LICENSE_PRIVATE_SEED_HEX) {
+      return jsonResponse(
+        { ok: false, error: "SFL_LICENSE_PRIVATE_SEED_HEX is not configured" },
+        500
+      );
+    }
+    const resolvedMask = resolveUpgradeMask(
+      targetTier,
+      prevTierCode,
+      prevMask,
+      params.requestedMask || 0
+    );
+    const days = Number(params.days) || 0;
+    const expiresTs = days > 0 ? nowSec + days * 86400 : 0;
+    licenseKey = await encodeLicenseKey(
+      {
+        version: 1,
+        product_mask: resolvedMask,
+        tier_code: targetTier,
+        issued_ts: nowSec,
+        expires_ts: expiresTs,
+        license_id_hex: licenseIdHex,
+      },
+      env.SFL_LICENSE_PRIVATE_SEED_HEX
+    );
+    record.highest_tier_code = targetTier;
+    record.highest_product_mask = resolvedMask;
+    record.revoked = false;
+    record.latest_license_key = licenseKey;
+    upgraded = true;
+
+    const licKvKey = "lic:" + licenseIdHex;
+    const existingLic = await getKv(env, licKvKey);
+    if (existingLic) {
+      existingLic.revoked = false;
+      existingLic.tier_code = targetTier;
+      existingLic.max_seats = TIER_MAX_SEATS[targetTier] || 1;
+      await putKv(env, licKvKey, existingLic);
+    }
+  }
+
+  await putKv(env, donorKvKey, record);
+
+  if (params.pledgeUpdate?.pledgeId) {
+    await putKv(env, "patreon_pledge:" + params.pledgeUpdate.pledgeId, {
+      email: cleanEmail,
+    });
+  }
+
+  if (upgraded && env?.TELEGRAM_BOT_TOKEN && env?.TELEGRAM_CHAT_ID) {
+    const notifyPromise = sendTelegramTierUpgrade(env, {
+      email: cleanEmail,
+      totalCents: record.total_cents,
+      previousTier: prevTierCode,
+      newTier: record.highest_tier_code,
+      licenseKey,
+      source: params.source,
+    }).catch((err) =>
+      console.error("Telegram tier upgrade notification error:", err)
+    );
+    if (ctx && typeof ctx.waitUntil === "function") {
+      ctx.waitUntil(notifyPromise);
+    }
+  }
+
+  return jsonResponse(
+    {
+      ok: true,
+      upgraded,
+      revoked: Boolean(record.revoked),
+      email: cleanEmail,
+      total_cents: record.total_cents,
+      total_usd: (record.total_cents / 100).toFixed(2),
+      previous_tier_code: prevTierCode,
+      highest_tier_code: record.highest_tier_code,
+      tier_code: record.highest_tier_code,
+      tier_name: TIER_NAMES[record.highest_tier_code] || "None",
+      product_mask: record.highest_product_mask,
+      max_seats: TIER_MAX_SEATS[record.highest_tier_code] || 0,
+      license_id_hex: licenseIdHex,
+      license_key: licenseKey,
+    },
+    200
+  );
+}
+
+function extractPatreonEmail(payload) {
+  const direct = payload?.data?.attributes?.email;
+  if (typeof direct === "string" && direct.trim()) {
+    return direct.trim().toLowerCase();
+  }
+  const userId = payload?.data?.relationships?.user?.data?.id;
+  const included = Array.isArray(payload?.included) ? payload.included : [];
+  for (const item of included) {
+    if (item?.type === "user" && (!userId || item.id === userId)) {
+      const email = item?.attributes?.email;
+      if (typeof email === "string" && email.trim()) {
+        return email.trim().toLowerCase();
+      }
+    }
+  }
+  return "";
+}
+
+function extractPatreonEntitledCents(eventName, attrs) {
+  if (eventName === "members:pledge:delete") {
+    return 0;
+  }
+  const raw =
+    attrs?.currently_entitled_amount_cents ??
+    attrs?.will_pay_amount_cents ??
+    attrs?.pledge_amount_cents ??
+    0;
+  const cents = Number(raw);
+  return Number.isFinite(cents) && cents >= 0 ? Math.round(cents) : 0;
+}
+
+async function handlePatreonWebhook(request, env, ctx) {
+  if (request.method !== "POST") {
+    return jsonResponse({ ok: false, error: "Method Not Allowed. Use POST." }, 405);
+  }
+  if (!env || !env.PATREON_WEBHOOK_SECRET) {
+    return jsonResponse(
+      { ok: false, error: "PATREON_WEBHOOK_SECRET is not configured" },
+      500
+    );
+  }
+
+  const rawBody = await request.text();
+  const sigHeader = (request.headers.get("x-patreon-signature") || "")
+    .trim()
+    .toLowerCase();
+  const expectedSig = hmacMd5Hex(env.PATREON_WEBHOOK_SECRET, rawBody);
+  if (!sigHeader || !constantTimeEqual(sigHeader, expectedSig)) {
+    return jsonResponse(
+      { ok: false, error_code: "invalid_signature", error: "Invalid Patreon signature" },
+      401
+    );
+  }
+
+  const eventName = (request.headers.get("x-patreon-event") || "").trim();
+  if (!eventName) {
+    return jsonResponse({ ok: false, error: "Missing X-Patreon-Event header" }, 400);
+  }
+  const supported = new Set([
+    "members:pledge:create",
+    "members:pledge:update",
+    "members:pledge:delete",
+  ]);
+  if (!supported.has(eventName)) {
+    return jsonResponse({ ok: true, ignored: true, event: eventName }, 200);
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(rawBody);
+  } catch {
+    return jsonResponse({ ok: false, error: "Invalid JSON body" }, 400);
+  }
+
+  const pledgeId = String(payload?.data?.id || "").trim();
+  if (!pledgeId) {
+    return jsonResponse({ ok: false, error: "Missing Patreon data.id" }, 400);
+  }
+
+  let email = extractPatreonEmail(payload);
+  if (!email) {
+    const pledgeRef = await getKv(env, "patreon_pledge:" + pledgeId);
+    email = pledgeRef?.email || "";
+  }
+  if (!email) {
+    return jsonResponse({ ok: false, error: "Missing donor email in Patreon payload" }, 400);
+  }
+
+  const newCents = extractPatreonEntitledCents(eventName, payload?.data?.attributes || {});
+  return await applyDonorContribution(env, ctx, {
+    email,
+    deltaCents: 0,
+    pledgeUpdate: { pledgeId, newCents, eventName },
+    requestedMask: 0,
+    days: 0,
+    source: `patreon:${eventName}`,
+  });
+}
+
+async function handleRecordDonation(request, env, ctx) {
+  if (request.method !== "POST") {
+    return jsonResponse({ ok: false, error: "Method Not Allowed. Use POST." }, 405);
+  }
+  if (!env || !env.ADMIN_API_TOKEN) {
+    return jsonResponse(
+      { ok: false, error: "ADMIN_API_TOKEN is not configured" },
+      500
+    );
+  }
+
+  const authHeader = (request.headers.get("authorization") || "").trim();
+  const bearerPrefix = "Bearer ";
+  const providedToken = authHeader.startsWith(bearerPrefix)
+    ? authHeader.slice(bearerPrefix.length).trim()
+    : "";
+  if (!providedToken || !constantTimeEqual(providedToken, env.ADMIN_API_TOKEN)) {
+    return jsonResponse(
+      { ok: false, error_code: "unauthorized", error: "Invalid or missing Bearer token" },
+      401
+    );
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ ok: false, error: "Invalid JSON body" }, 400);
+  }
+
+  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+  if (!email) {
+    return jsonResponse({ ok: false, error: "Missing required field: email" }, 400);
+  }
+
+  let amountCents;
+  if (body?.amount_cents !== undefined && body?.amount_cents !== null) {
+    amountCents = Number(body.amount_cents);
+  } else if (body?.amount_usd !== undefined || body?.amount !== undefined) {
+    const usd = Number(body.amount_usd ?? body.amount);
+    amountCents = Math.round(usd * 100);
+  }
+
+  if (!Number.isInteger(amountCents) || amountCents === 0) {
+    return jsonResponse(
+      { ok: false, error: "amount_cents (or amount) must be a non-zero integer/number" },
+      400
+    );
+  }
+
+  const txId = typeof body?.tx_id === "string" && body.tx_id.trim() ? body.tx_id.trim() : null;
+  const source = typeof body?.source === "string" && body.source.trim() ? body.source.trim() : "manual";
+  const requestedMask = parseRequestedMask(body?.apps, body?.product_mask);
+  const days = Number.isInteger(Number(body?.days)) && Number(body?.days) > 0 ? Number(body.days) : 0;
+
+  return await applyDonorContribution(env, ctx, {
+    email,
+    deltaCents: amountCents,
+    txId,
+    requestedMask,
+    days,
+    source,
+  });
+}
+
 // --- Ko-fi Webhook Handler (100% Backward Compatible) ---
 
 async function handleKofiWebhook(request, env, ctx) {
@@ -856,8 +1570,8 @@ export default {
     const url = new URL(request.url);
     const pathname = url.pathname;
 
-    // Handle OPTIONS preflight for /api/license/*
-    if (request.method === "OPTIONS" && pathname.startsWith("/api/license/")) {
+    // Handle OPTIONS preflight for /api/*
+    if (request.method === "OPTIONS" && pathname.startsWith("/api/")) {
       return new Response(null, {
         status: 204,
         headers: {
@@ -872,6 +1586,16 @@ export default {
     // License API routes
     if (pathname.startsWith("/api/license/")) {
       return await handleLicenseRouting(request, env, ctx, pathname);
+    }
+
+    // Patreon v2 webhook route
+    if (pathname === "/api/webhooks/patreon") {
+      return await handlePatreonWebhook(request, env, ctx);
+    }
+
+    // Admin / manual / Patreon-Shop donation recording route
+    if (pathname === "/api/donations/record") {
+      return await handleRecordDonation(request, env, ctx);
     }
 
     // Ko-fi webhook handling

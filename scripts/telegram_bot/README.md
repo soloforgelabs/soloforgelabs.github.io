@@ -72,5 +72,36 @@ npx wrangler deploy
 ```
 
 ### Необходимые секреты для `soloforgelabs-license`
-- `SFL_LICENSE_PRIVATE_SEED_HEX` — обязателен для подписи `seat_cert` при `/api/license/activate` и `/api/license/replace`
-- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `KOFI_TOKEN` — опциональны, если этот же воркер используется и для Ko-fi webhook.
+- `SFL_LICENSE_PRIVATE_SEED_HEX` — обязателен для подписи `seat_cert` при `/api/license/activate` и `/api/license/replace`, а также для выпуска ключей `SFL1-...` при апгрейдах доноров
+- `PATREON_WEBHOOK_SECRET` — секрет из настроек Patreon Webhook для проверки `X-Patreon-Signature` (pure-JS HMAC-MD5) на `POST /api/webhooks/patreon`
+- `ADMIN_API_TOKEN` — Bearer-токен для ручной/CLI записи донатов и возвратов через `POST /api/donations/record`
+- `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `KOFI_TOKEN` — для уведомлений в Telegram (Ko-fi webhook и алерты при выпуске/апгрейде ключа донору).
+
+---
+
+## Вариант 4: Кумулятивный леджер доноров, Patreon v2 Webhooks и автовыпуск ключей
+
+Воркер ведёт кумулятивный баланс доноров в `LICENSE_KV` (`donor:<sha256_email>`) и автоматически выпускает/обновляет Ed25519-ключи `SFL1-...` при достижении порогов:
+
+### Пороги в USD (кумулятивно по `email`)
+| Порог | Tier Code | Тариф | `product_mask` | Лимит ПК |
+| :--- | :--- | :--- | :--- | :--- |
+| **>= $3.00** (`300` центов) | `4` | Bronze Supporter | `7` (все 3 орба) | `1` |
+| **>= $5.00** (`500` центов) | `1` | Silver / Single Edition | `1` (или `apps`, маска Bronze `7` не наследуется) | `1` |
+| **>= $13.00** (`1300` центов) | `2` | Gold / Duo Pack | наследуется от платного AI-тира (`1/2/3`) или `5` (`BlinkScribe \| VoxScribe`) | `2` |
+| **>= $15.00** (`1500` центов) | `3` | Platinum / Scribe Trinity | `7` (все 3 приложения) | `5` |
+
+> При возвратах или `members:pledge:delete`, если сумма падает ниже порога выданного тира, воркер выставляет `lic:<id>.revoked = true`, и `/api/license/activate` и `/api/license/replace` возвращают HTTP `403` (`error_code: "license_revoked"`).
+
+### Новые эндпоинты
+- **`POST /api/webhooks/patreon`** — принимает события Patreon v2 (`members:pledge:create`, `members:pledge:update`, `members:pledge:delete`), проверяет `X-Patreon-Signature` (pure-JS RFC 2104 HMAC-MD5 с `PATREON_WEBHOOK_SECRET`), учитывает дельту `currently_entitled_amount_cents` по `patreon_pledges[data.id]` без дублирования и отправляет уведомление в Telegram при апгрейде.
+- **`POST /api/donations/record`** — защищённый заголовком `Authorization: Bearer <ADMIN_API_TOKEN>` эндпоинт для ручной записи донатов/покупок Patreon Shop/возвратов (`email`, `amount_cents` или `amount`, `tx_id`, `source`, `apps`).
+
+### CLI-режим в `scripts/license_keygen.py`
+```powershell
+# Локальный JSON-леджер:
+python scripts/license_keygen.py --record-donation --email donor@example.com --amount 5.00 --apps blinkscribe --ledger-file scripts/.donor_ledger.json --json
+
+# Удалённая запись через Cloudflare Worker:
+python scripts/license_keygen.py --record-donation --email donor@example.com --amount 10.00 --worker-url https://soloforgelabs-license.soloforgelabs.workers.dev --admin-token "<ADMIN_API_TOKEN>"
+```
