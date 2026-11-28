@@ -39,10 +39,10 @@
 
 | Product | Form Factor | Architecture | Status | Primary Capability |
 | :--- | :--- | :--- | :--- | :--- |
-| **⚡ [BlinkScribe](#-blinkscribe)** | Desktop (Windows) | Cloud-Accelerated LPU | **v1.4.0 Live** | Sub-second voice dictation, translation & business polish (<60 MB RAM) |
-| **🛡️ [DeskScribe](#%EF%B8%8F-deskscribe)** | Desktop (Windows) | 100% Offline Local Whisper | **v1.4.0 Live** | Air-gapped 99-language Whisper & Qwen GGUF dictation (Zero Telemetry) |
-| **🟣 [VoxScribe](#-voxscribe)** | Desktop (Windows) | 100% Offline NVIDIA NeMo ONNX | **v1.2.6 Live** | Next-gen Parakeet-TDT & Canary-1B dictation, live streaming & single-pass AST |
-| **🎙️ [MeetScribe](#%EF%B8%8F-meetscribe-public-beta)** | Desktop (Windows) | Hybrid Dual WASAPI + CAM++ | **v0.1.0 Beta** | Dual mic+loopback meeting recorder, local speaker diarization & stealth overlay |
+| **⚡ [BlinkScribe](#-blinkscribe)** | Desktop (Windows) | Cloud-Accelerated LPU | **v1.5.0 Live** | Sub-second voice dictation, translation & business polish (<60 MB RAM) |
+| **🛡️ [DeskScribe](#%EF%B8%8F-deskscribe)** | Desktop (Windows) | 100% Offline Local Whisper | **v1.5.0 Live** | Air-gapped 99-language Whisper & Qwen GGUF dictation (Zero Telemetry) |
+| **🟣 [VoxScribe](#-voxscribe)** | Desktop (Windows) | 100% Offline NVIDIA NeMo ONNX | **v1.5.0 Live** | Next-gen Parakeet-TDT & Canary-1B dictation, live streaming & single-pass AST |
+| **🎙️ [MeetScribe](#%EF%B8%8F-meetscribe-public-beta)** | Desktop (Windows) | Hybrid Dual WASAPI + CAM++ | **v1.5.0 Beta** | Dual mic+loopback meeting recorder, local speaker diarization & stealth overlay |
 | **📐 SizeRadar** | Desktop Utility | Native Pixel & Storage Inspector | *RC Q4 2026* | Intelligent disk map, perceptual duplicate finder & dev debris cleaner |
 | **🥗 FoodLens** | Mobile (Android) | On-device Computer Vision | *Roadmap* | Smart food macro identification & nutrition camera |
 | **💓 PulseTrack** | Mobile (Android) | Encrypted Telemetry Suite | *Concept* | Private personal health tracker (blood pressure, hydration, medications) |
@@ -54,8 +54,8 @@
 <div align="center">
   <p><strong>Featherweight, sub-second cloud-accelerated voice dictation for Windows.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/blinkscribe-v1.4.0/BlinkScribe_Setup_v1.4.0.exe"><strong>⬇️ Download Installer (44.8 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/blinkscribe-v1.4.0/BlinkScribe_Portable_v1.4.0.zip"><strong>📦 Download Portable .ZIP (42.8 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/blinkscribe-v1.5.0/BlinkScribe_Setup_v1.5.0.exe"><strong>⬇️ Download Installer (45.9 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/blinkscribe-v1.5.0/BlinkScribe_Portable_v1.5.0.zip"><strong>📦 Download Portable .ZIP (43.9 MB)</strong></a> •
     <a href="docs/blinkscribe/USER_GUIDE.md"><strong>📖 Full User Guide & API Setup →</strong></a>
   </p>
 </div>
@@ -93,8 +93,8 @@ All three Scribe tools (**BlinkScribe**, **DeskScribe**, and **VoxScribe**) shar
 <div align="center">
   <p><strong>100% Offline-First, zero-cloud 99-language Whisper voice dictation and local text refinement.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.4.0/DeskScribe_Setup_v1.4.0.exe"><strong>⬇️ Download Installer (141.5 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.4.0/DeskScribe_v1.4.0_Portable.zip"><strong>📦 Download Portable .ZIP (214.9 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.5.0/DeskScribe_Setup_v1.5.0.exe"><strong>⬇️ Download Installer (93.5 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/deskscribe-v1.5.0/DeskScribe_v1.5.0_Portable.zip"><strong>📦 Download Portable .ZIP (143.6 MB)</strong></a> •
     <a href="docs/deskscribe/USER_GUIDE.md"><strong>📖 Full User Guide & Model Guide →</strong></a>
   </p>
 </div>
@@ -116,8 +116,8 @@ DeskScribe is built for security professionals, legal/medical practitioners, ent
 <div align="center">
   <p><strong>100% Offline NVIDIA NeMo FastConformer voice dictation, realtime live streaming & single-pass translation.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.2.6/VoxScribe_Setup_v1.2.6.exe"><strong>⬇️ Download Installer (104.3 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.2.6/VoxScribe_v1.2.6_Portable.zip"><strong>📦 Download Portable .ZIP (163.2 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.5.0/VoxScribe_Setup_v1.5.0.exe"><strong>⬇️ Download Installer (59.1 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/voxscribe-v1.5.0/VoxScribe_v1.5.0_Portable.zip"><strong>📦 Download Portable .ZIP (96.6 MB)</strong></a> •
     <a href="docs/voxscribe/USER_GUIDE.md"><strong>📖 Full User Guide & NVIDIA Models Manual →</strong></a>
   </p>
 </div>
@@ -147,7 +147,7 @@ DeskScribe is built for security professionals, legal/medical practitioners, ent
 | **Text Polish Model** | `llama-3.3-70b-versatile` (Cloud) | `Qwen2.5-1.5B-Instruct` (Local GGUF) | `Qwen2.5-1.5B/3B-Instruct` (Local GGUF + Negation Guard) |
 | **RAM Footprint** | **< 60 MB** | ~800 MB to ~3.5 GB | **~600 MB to ~1.8 GB** |
 | **Internet Required?** | Yes (Free Groq API key) | **No (100% Air-Gapped)** | **No (100% Air-Gapped)** |
-| **Download Size** | **~44.8 MB** (Setup) / **~42.8 MB** (ZIP) | **~141.5 MB** (Setup) / **~214.9 MB** (ZIP) | **~104.3 MB** (Setup) / **~163.2 MB** (ZIP) |
+| **Download Size** | **45.9 MB** (Setup) / **43.9 MB** (ZIP) | **93.5 MB** (Setup) / **143.6 MB** (ZIP) | **59.1 MB** (Setup) / **96.6 MB** (ZIP) |
 | **Best Suited For** | Featherweight laptops, 0% GPU load | Global 99+ languages under NDA | **Fastest offline European ASR, live streaming & zero hallucinations** |
 
 👉 *Read the complete pros & cons analysis in [docs/COMPARISON.md](docs/COMPARISON.md).*
@@ -159,9 +159,9 @@ DeskScribe is built for security professionals, legal/medical practitioners, ent
 <div align="center">
   <p><strong>Hybrid meeting recorder, local NVIDIA Parakeet transcriber &amp; CAM++ speaker diarization for Windows.</strong></p>
   <p>
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/meetscribe-v0.1.0/MeetScribe_Setup_v0.1.0.exe"><strong>⬇️ Download Installer (146.5 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/meetscribe-v0.1.0/MeetScribe_v0.1.0_Portable.zip"><strong>📦 Download Portable .ZIP (144.7 MB)</strong></a> •
-    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/tag/meetscribe-v0.1.0"><strong>📋 Beta Release Notes →</strong></a>
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/meetscribe-v1.5.0/MeetScribe_Setup_v1.5.0.exe"><strong>⬇️ Download Installer (149.4 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/download/meetscribe-v1.5.0/MeetScribe_v1.5.0_Portable.zip"><strong>📦 Download Portable .ZIP (147.6 MB)</strong></a> •
+    <a href="https://github.com/soloforgelabs/soloforgelabs.github.io/releases/tag/meetscribe-v1.5.0"><strong>📋 Beta Release Notes →</strong></a>
   </p>
 </div>
 
@@ -177,20 +177,20 @@ To verify the integrity and authenticity of downloaded binaries, compare the com
 
 | File Name | Size | SHA-256 Hash |
 | :--- | :--- | :--- |
-| `BlinkScribe_Setup_v1.4.0.exe` | 44.9 MB | `8450B6FC658A7DD11843EF16E86C514DF177A7718973EE9778297E313BA680AC` |
-| `BlinkScribe_Portable_v1.4.0.zip` | 42.9 MB | `0F537B74F91A4ACFD1056948973A5A30B4C5E85CD9C9713C7D2475D91B5850AC` |
-| `DeskScribe_Setup_v1.4.0.exe` | 141.6 MB | `39BC4F7423E04C98DA36A7A83E12ADED6545F35B889986FE30CAB06BBABB9C98` |
-| `DeskScribe_v1.4.0_Portable.zip` | 214.9 MB | `3E4110FA786C166285EBE3F0AD97F0BC55C2B42EC38D9EA46963AD165842B363` |
-| `VoxScribe_Setup_v1.2.6.exe` | 104.3 MB | `59967A805FB9C33CFBD7F937013122B5B9DFD61BF0CFFE13FC79ADFF5EB7FE12` |
-| `VoxScribe_v1.2.6_Portable.zip` | 163.2 MB | `7F8E880B1E7B49E652C6C16680BF5D762AA20D2507C42287288303D8C9FE5284` |
-| `MeetScribe_Setup_v0.1.0.exe` | 146.5 MB | `170C2DE1FFBAB202308A04E91E1B714EFC1E2EAE7F6374D51A817D79457B9491` |
-| `MeetScribe_v0.1.0_Portable.zip` | 144.7 MB | `6D0DABE961A377DB6C9593D0611FEA250C2623A36F74DF6E2723E73E5C0785DC` |
+| `BlinkScribe_Setup_v1.5.0.exe` | 45.9 MB | `D2069803318615DF865CC2BC80FD92E22B5F4EB7FF5CF0B851303FD6759676AF` |
+| `BlinkScribe_Portable_v1.5.0.zip` | 43.9 MB | `AF778394E40FD846B4EF5476709FFAF91C31290360CFBBA8667C78D2D18AE943` |
+| `DeskScribe_Setup_v1.5.0.exe` | 93.5 MB | `BC6021CB1ECAA548E08F938ABEB7226937549D40DD932EED9448DD061F2E180B` |
+| `DeskScribe_v1.5.0_Portable.zip` | 143.6 MB | `7FBD0D0D3465BFF7A46C88D3217B1D4B61B02FA09473856D9120F0EC3F7BB5EF` |
+| `VoxScribe_Setup_v1.5.0.exe` | 59.1 MB | `ACC789E0117344DA972BACB055A9EA146E79ACD579C7C7DEFC5C8593AE3DA4F7` |
+| `VoxScribe_v1.5.0_Portable.zip` | 96.6 MB | `6D99D0B2E1827AC9515517DACE56564BBF949ECE7DA3C4EB702BB901FF9B1698` |
+| `MeetScribe_Setup_v1.5.0.exe` | 149.4 MB | `6EA42F85FB8B9D24318B3E027B235DFD7BC337B0E61FE31B0EC9EF5DC6D8AB0B` |
+| `MeetScribe_v1.5.0_Portable.zip` | 147.6 MB | `5769AB37554D1AEFC0FC6E63C2684CE3CCE07EB08A4291F93551E0F3A728FF1B` |
 
 *(A raw checksum file is also provided at [docs/checksums.sha256](docs/checksums.sha256)).*
 
 ### PowerShell Verification Command:
 ```powershell
-Get-FileHash .\VoxScribe_Setup_v1.2.6.exe -Algorithm SHA256
+Get-FileHash .\VoxScribe_Setup_v1.5.0.exe -Algorithm SHA256
 ```
 
 ---
@@ -207,12 +207,12 @@ SoloForge Labs utilities are distributed as closed-source freeware. We welcome a
 
 ## 🧡 Support Independent Engineering & Licensing
 
-SoloForge Labs products are built and maintained independently with unlimited free Verbatim dictation and 20 Free Pro Trial runs. Support ongoing development or unlock perpetual desktop licenses + metallic Voice Orb skins on our Patreon Shop:
+SoloForge Labs products are built and maintained independently with unlimited free Verbatim dictation and 20 Free Pro Trial runs. Support ongoing development or unlock perpetual desktop licenses + Full-App Metallic & Coin Orb skins on our Patreon Shop:
 
-* **$3 Bronze Supporter Tip** (`1 PC`): **Bronze Coin Orb** skin across all 3 apps (keeps Free Tier limits)
-* **$5 Single Edition** (`1 PC`): Unlock 1 Scribe app + **Silver Coin Orb** skin
-* **$13 Duo Pack** (`2 PCs`): Unlock BlinkScribe + 1 Offline engine + **Gold Coin Orb** skin
-* **$15 Scribe Trinity** (`5 PCs`): Unlock all 3 Scribe apps + Browser Extension + **Platinum Coin & Custom PNG Orb** skins
+* **$3 Bronze Supporter Tip** (`1 PC`): **Bronze Coin Orb + Full-App Bronze Skin** across all 3 apps (keeps Free Tier limits)
+* **$5 Single Edition** (`1 PC`): Unlock 1 Scribe app + **Silver Coin Orb + Full-App Silver Skin**
+* **$13 Duo Pack** (`2 PCs`): Unlock BlinkScribe + 1 Offline engine + **Gold Coin Orb + Full-App Gold Skin**
+* **$15 Scribe Trinity** (`5 PCs`): Unlock all 3 Scribe apps + Browser Extension + **Platinum Coin Orb, Full-App Platinum Skin & Custom PNG Orb**
 
 <div align="center">
 
